@@ -1,0 +1,25 @@
+{
+  "castle": {
+    "hp": 3000,
+    "displayName": "主城",
+    "scaleX": 2,
+    "scaleY": 1,
+    "scaleZ": 2
+  },
+  "barracks": {
+    "level1Hp": 800,
+    "buildCost": 50,
+    "upgradeCost": 80,
+    "displayName": "兵营",
+    "scaleX": 1,
+    "scaleY": 0.5,
+    "scaleZ": 1
+  },
+  "generalAltar": {
+    "hp": 500,
+    "displayName": "将坛",
+    "radius": 0.8,
+    "height": 0.4,
+    "alpha": 0.7
+  }
+}
