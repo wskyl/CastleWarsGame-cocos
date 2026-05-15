@@ -1,0 +1,21 @@
+{
+  "arrowTower": {
+    "name": "箭楼",
+    "hp": 600,
+    "atk": 15,
+    "atkInterval": 2.0,
+    "atkRange": 8.0,
+    "buildCost": 60
+  },
+  "fireTower": {
+    "name": "火油塔",
+    "hp": 500,
+    "atk": 30,
+    "atkInterval": 5.0,
+    "atkRange": 6.0,
+    "buildCost": 100,
+    "aoeRadius": 2.5,
+    "burnDmgPerSec": 5,
+    "burnDuration": 3
+  }
+}

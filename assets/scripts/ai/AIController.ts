@@ -1,16 +1,22 @@
 /**
- * AIController.ts
- * AI 行为树（普通难度）：每秒执行一次决策，按优先级顺序检查并执行操作。
- * 决策优先级：
- *   1. 重建被摧毁的兵营（gold ≥ rebuildGoldThreshold）
- *   2. 建造第 2 兵营（barracks < 2 && gold ≥ buildBarracks2GoldThreshold）
- *   3. 升级兵营至 2 级（有 1 级兵营 && 场上兵力 ≥ upgradeMinTroopsOnField && gold ≥ upgradeGoldThreshold）
- *   4. 持有（等待金币增长）
- * 挂载于 Battle 场景各 AI 专属节点。
+ * AIController.ts  ── Phase 2 扩展版
+ * 决策优先级（Phase 2 完整版）：
+ *   1. 使用将领技能（将领在场 && 技能 CD 到 && 附近敌军 ≥ useSkillEnemiesNearby）
+ *   2. 召唤将领（将领不在场 && 未在复活 CD && gold ≥ summonGeneralGoldThreshold）
+ *   3. 重建被摧毁的兵营（gold ≥ rebuildGoldThreshold）
+ *   4. 建造第 2 兵营（gold ≥ buildBarracks2GoldThreshold）
+ *   5. 升级兵营至 3 级（level=2 && troopCount ≥ upgradeTo3MinTroops && gold ≥ upgradeTo3Threshold）
+ *   6. 升级兵营至 2 级（level=1 && troopCount ≥ upgradeMinTroops && gold ≥ upgradeThreshold）
+ *   7. 建造市集（未建 && gold ≥ buildMarketGoldThreshold）
+ *   8. 建造防御塔（有未建槽位 && gold ≥ buildTowerGoldThreshold）
+ *   9. 持有（等待金币增长）
  */
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, Node, Vec3 } from 'cc';
 import { GameManager, AiConfig, GamePhase } from '../core/GameManager';
 import { Barracks } from '../buildings/Barracks';
+import { DefenseTower } from '../buildings/DefenseTower';
+import { Market } from '../buildings/Market';
+import { GeneralAltar } from '../buildings/GeneralAltar';
 
 const { ccclass } = _decorator;
 
@@ -26,15 +32,30 @@ export class AIController extends Component {
     /** 阵营所有兵营组件（包括未建造的 Slot 1） */
     private _barracks: Barracks[] = [];
 
-    initAI(factionId: string, factionRoot: Node, troopRoot: Node): void {
-        this.factionId    = factionId;
-        this._factionRoot = factionRoot;
-        this._troopRoot   = troopRoot;
-        this._cfg         = GameManager.inst?.aiConfig ?? null;
+    // Phase 2 建筑引用（由 MapBuilder 注入）
+    private _generalAltar: GeneralAltar | null = null;
+    private _towers:       DefenseTower[]      = [];
+    private _market:       Market | null       = null;
+
+    initAI(
+        factionId: string,
+        factionRoot: Node,
+        troopRoot: Node,
+        generalAltar: GeneralAltar | null = null,
+        towers: DefenseTower[]            = [],
+        market: Market | null             = null,
+    ): void {
+        this.factionId       = factionId;
+        this._factionRoot    = factionRoot;
+        this._troopRoot      = troopRoot;
+        this._cfg            = GameManager.inst?.aiConfig ?? null;
+        this._generalAltar   = generalAltar;
+        this._towers         = towers;
+        this._market         = market;
         this._refreshBarracks();
     }
 
-    /** 收集该阵营所有 Barracks 组件 */
+    /** 收集该阵营所有 Barracks 组件（含 Slot 1 未建的） */
     private _refreshBarracks(): void {
         this._barracks = [];
         if (!this._factionRoot) return;
@@ -57,24 +78,47 @@ export class AIController extends Component {
     }
 
     private _decide(): void {
-        const gm  = GameManager.inst;
-        const cfg = this._cfg!;
-        const gold = gm.getGold(this.factionId);
+        const gm    = GameManager.inst;
+        const cfg   = this._cfg!;
+        const gold  = gm.getGold(this.factionId);
         const state = gm.getFactionState(this.factionId);
         if (!state) return;
 
         this._refreshBarracks();
 
-        // ─ 1. 重建被摧毁的兵营 ─────────────────────────────────────────
+        // ─ 1. 使用将领技能 ──────────────────────────────────────────────
+        const gs = gm.getGeneralState(this.factionId);
+        if (gs?.onField && gs.generalRef) {
+            const skillCd = gm.generalsConfig.find(g => g.factionId === this.factionId)?.skill.cooldown ?? 30;
+            if (gs.skillCooldown <= 0) {
+                // 检测附近敌军数量
+                const myPos  = this._getGeneralPos();
+                const nearby = myPos ? this._countNearbyEnemies(myPos, 8) : 0;
+                if (nearby >= (cfg.useSkillEnemiesNearby ?? 3)) {
+                    (gs.generalRef as import('../generals/GeneralComponent').GeneralComponent).useSkill();
+                    return;
+                }
+            }
+        }
+
+        // ─ 2. 召唤将领 ──────────────────────────────────────────────────
+        if (gold >= (cfg.summonGeneralGoldThreshold ?? 200)) {
+            if (gm.canSummonGeneral(this.factionId) && this._generalAltar) {
+                this._generalAltar.summonGeneral();
+                return;
+            }
+        }
+
+        // ─ 3. 重建被摧毁的兵营 ─────────────────────────────────────────
         if (gold >= cfg.rebuildGoldThreshold) {
-            const destroyed = this._barracks.find(b => b.isDestroyed && b.slotIndex === 0 && b.isBuilt === false);
+            const destroyed = this._barracks.find(b => b.isDestroyed && b.slotIndex === 0);
             if (destroyed) {
                 destroyed.rebuild(this._troopRoot!);
                 return;
             }
         }
 
-        // ─ 2. 建造第 2 兵营 ─────────────────────────────────────────────
+        // ─ 4. 建造第 2 兵营 ─────────────────────────────────────────────
         if (gold >= cfg.buildBarracks2GoldThreshold) {
             const slot1 = this._barracks.find(b => b.slotIndex === 1 && !b.isBuilt);
             if (slot1) {
@@ -83,20 +127,65 @@ export class AIController extends Component {
             }
         }
 
-        // ─ 3. 升级兵营至 2 级 ──────────────────────────────────────────
+        // ─ 5. 升级兵营至 3 级 ──────────────────────────────────────────
+        if (
+            gold >= (cfg.upgradeTo3GoldThreshold ?? 150) &&
+            state.troopCount >= (cfg.upgradeTo3MinTroopsOnField ?? 10)
+        ) {
+            const upgradeable = this._barracks.find(b => b.isBuilt && b.barracksLevel === 2);
+            if (upgradeable) {
+                upgradeable.upgradeToLevel3();
+                return;
+            }
+        }
+
+        // ─ 6. 升级兵营至 2 级 ──────────────────────────────────────────
         if (
             gold >= cfg.upgradeGoldThreshold &&
             state.troopCount >= cfg.upgradeMinTroopsOnField
         ) {
-            const upgradeable = this._barracks.find(
-                b => b.isBuilt && b.barracksLevel === 1,
-            );
+            const upgradeable = this._barracks.find(b => b.isBuilt && b.barracksLevel === 1);
             if (upgradeable) {
                 upgradeable.upgradeToLevel2();
                 return;
             }
         }
 
-        // ─ 4. 持有（无操作） ─────────────────────────────────────────────
+        // ─ 7. 建造市集 ──────────────────────────────────────────────────
+        if (gold >= (cfg.buildMarketGoldThreshold ?? 150)) {
+            if (this._market && !this._market.isBuilt) {
+                this._market.build();
+                return;
+            }
+        }
+
+        // ─ 8. 建造防御塔 ────────────────────────────────────────────────
+        if (gold >= (cfg.buildTowerGoldThreshold ?? 100)) {
+            const unbuit = this._towers.find(t => !t.isBuilt);
+            if (unbuit) {
+                unbuit.build();
+                return;
+            }
+        }
+
+        // ─ 9. 持有（无操作） ─────────────────────────────────────────────
+    }
+
+    // ─── 辅助：获取己方将领位置 ─────────────────────────────────────────
+    private _getGeneralPos(): Vec3 | null {
+        const gs = GameManager.inst?.getGeneralState(this.factionId);
+        if (!gs?.generalRef) return null;
+        const comp = gs.generalRef as import('../generals/GeneralComponent').GeneralComponent;
+        return comp.node?.isValid ? comp.node.getWorldPosition() : null;
+    }
+
+    // ─── 辅助：统计指定半径内敌军数量 ──────────────────────────────────
+    private _countNearbyEnemies(pos: Vec3, radius: number): number {
+        let count = 0;
+        GameManager.inst?.getTargets().forEach(t => {
+            if (t.factionId === this.factionId) return;
+            if (Vec3.distance(pos, t.position) <= radius) count++;
+        });
+        return count;
     }
 }
