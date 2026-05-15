@@ -1,0 +1,12 @@
+{
+  "baseIncomePerSecond": 2,
+  "altarBonusMultiplier": 1.2,
+  "altarDurationSeconds": 60,
+  "initialGold": 100,
+  "maxGold": 999,
+  "killReward": {
+    "tier1Troop": 1,
+    "tier2Troop": 3,
+    "barracks": 15
+  }
+}

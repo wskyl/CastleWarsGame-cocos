@@ -1,0 +1,93 @@
+{
+  "mapEdgeLength": 30,
+  "altarRadius": 4.5,
+  "altarCaptureDuration": 3,
+  "riverSlowMultiplier": 0.7,
+  "riverWidth": 3.0,
+  "maxTroopsOnField": 150,
+  "castlePositions": {
+    "wei": { "x": -14, "y": 0, "z": 10 },
+    "shu": { "x": 14,  "y": 0, "z": 10 },
+    "wu":  { "x": 0,   "y": 0, "z": -16 }
+  },
+  "barracksSlots": {
+    "wei": [
+      { "id": "wei_b1", "x": -11, "y": 0, "z": 8,  "laneKey": "wei_shu" },
+      { "id": "wei_b2", "x": -11, "y": 0, "z": 5,  "laneKey": "wu_wei_rev" }
+    ],
+    "shu": [
+      { "id": "shu_b1", "x": 11,  "y": 0, "z": 8,  "laneKey": "wei_shu_rev" },
+      { "id": "shu_b2", "x": 11,  "y": 0, "z": 5,  "laneKey": "shu_wu" }
+    ],
+    "wu": [
+      { "id": "wu_b1",  "x": -2,  "y": 0, "z": -13, "laneKey": "wu_wei" },
+      { "id": "wu_b2",  "x": 2,   "y": 0, "z": -13, "laneKey": "shu_wu_rev" }
+    ]
+  },
+  "generalAltarPositions": {
+    "wei": { "x": -12, "y": 0, "z": 12 },
+    "shu": { "x": 12,  "y": 0, "z": 12 },
+    "wu":  { "x": 0,   "y": 0, "z": -14 }
+  },
+  "altarPosition": { "x": 0, "y": 0, "z": 1.3 },
+  "lanes": {
+    "wei_shu": [
+      { "x": -14, "z": 10 },
+      { "x": -6,  "z": 11 },
+      { "x": 0,   "z": 11.5 },
+      { "x": 6,   "z": 11 },
+      { "x": 14,  "z": 10 }
+    ],
+    "shu_wu": [
+      { "x": 14,  "z": 10 },
+      { "x": 10,  "z": 1  },
+      { "x": 5,   "z": -7 },
+      { "x": 0,   "z": -16 }
+    ],
+    "wu_wei": [
+      { "x": 0,   "z": -16 },
+      { "x": -5,  "z": -7  },
+      { "x": -10, "z": 1   },
+      { "x": -14, "z": 10  }
+    ],
+    "wei_shu_rev": [
+      { "x": 14,  "z": 10 },
+      { "x": 6,   "z": 11 },
+      { "x": 0,   "z": 11.5 },
+      { "x": -6,  "z": 11 },
+      { "x": -14, "z": 10 }
+    ],
+    "shu_wu_rev": [
+      { "x": 0,   "z": -16 },
+      { "x": 5,   "z": -7  },
+      { "x": 10,  "z": 1   },
+      { "x": 14,  "z": 10  }
+    ],
+    "wu_wei_rev": [
+      { "x": -14, "z": 10  },
+      { "x": -10, "z": 1   },
+      { "x": -5,  "z": -7  },
+      { "x": 0,   "z": -16 }
+    ]
+  },
+  "rivers": [
+    {
+      "id": "river_top",
+      "start": { "x": 0,  "z": 1.3  },
+      "end":   { "x": 0,  "z": 10.5 },
+      "width": 3.0
+    },
+    {
+      "id": "river_right",
+      "start": { "x": 0,    "z": 1.3  },
+      "end":   { "x": 7,    "z": -3.3 },
+      "width": 3.0
+    },
+    {
+      "id": "river_left",
+      "start": { "x": 0,    "z": 1.3  },
+      "end":   { "x": -7,   "z": -3.3 },
+      "width": 3.0
+    }
+  ]
+}

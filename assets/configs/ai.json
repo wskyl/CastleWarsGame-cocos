@@ -1,0 +1,7 @@
+{
+  "decisionIntervalSeconds": 1.0,
+  "rebuildGoldThreshold": 50,
+  "buildBarracks2GoldThreshold": 200,
+  "upgradeGoldThreshold": 80,
+  "upgradeMinTroopsOnField": 5
+}
