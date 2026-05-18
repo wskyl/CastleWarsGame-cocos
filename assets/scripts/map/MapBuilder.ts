@@ -1,12 +1,13 @@
 /**
- * MapBuilder.ts
- * 程序化构建 Battle 场景所有 3D 地形、建筑节点（占位几何体）。
- * 挂载于 Battle 场景根节点，start() 时完成地图搭建。
+ * MapBuilder.ts  ── Phase 2 扩展版
+ * 新增：为各阵营创建防御塔槽位节点（初始不激活）、市集节点（初始不激活）；
+ *       创建 Slot 1 兵营节点（初始不激活，等待建造）；
+ *       _buildGeneralAltar() 现传入 troopRoot 给 initAltar()。
  *
  * 场景层级（程序化创建）：
  * BattleRoot
  *   ├─ MapRoot          (地形平面、河道、祭坛)
- *   ├─ wei_faction      (主城/兵营/将坛)
+ *   ├─ wei_faction      (主城/兵营×2/将坛/防御塔×N/市集)
  *   ├─ shu_faction
  *   ├─ wu_faction
  *   └─ TroopRoot        (士兵动态节点挂载点)
@@ -20,6 +21,8 @@ import { hexToColor, COLOR_NEUTRAL, COLOR_ROAD, COLOR_GRASS, COLOR_RIVER, FACTIO
 import { Castle } from '../buildings/Castle';
 import { Barracks } from '../buildings/Barracks';
 import { GeneralAltar } from '../buildings/GeneralAltar';
+import { DefenseTower } from '../buildings/DefenseTower';
+import { Market } from '../buildings/Market';
 import { TroopSpawner } from '../units/TroopSpawner';
 import { AltarController } from './AltarController';
 import { TerrainZone } from './TerrainZone';
@@ -32,6 +35,18 @@ const { ccclass, property } = _decorator;
 export class MapBuilder extends Component {
     /** 暴露给外部（如 BattleUI）的 TroopRoot 节点 */
     troopRoot: Node | null = null;
+
+    /** Phase 2: 各阵营防御塔组件列表（factionId -> DefenseTower[]） */
+    readonly towerMap: Map<string, DefenseTower[]> = new Map();
+
+    /** Phase 2: 各阵营市集组件（factionId -> Market） */
+    readonly marketMap: Map<string, Market> = new Map();
+
+    /** Phase 2: 各阵营将坛组件（factionId -> GeneralAltar） */
+    readonly altarMap: Map<string, GeneralAltar> = new Map();
+
+    /** 各阵营兵营列表（factionId -> [Slot0, Slot1]） */
+    readonly barracksMap: Map<string, Barracks[]> = new Map();
 
     // ─── 内部辅助：创建带颜色材质的 MeshRenderer 节点 ─────────────────────
     private _createMeshNode(
@@ -54,7 +69,7 @@ export class MapBuilder extends Component {
         return node;
     }
 
-    // ─── 创建一个简单 HP 血条（两层 Box：背景红 + 前景阵营色） ────────────
+    // ─── 创建一个简单 HP 血条（两层 Box：背景灰 + 前景阵营色） ──────────
     private _createHpBar(parent: Node, factionColor: string, barWidth: number = 2): Node {
         const root = new Node('HpBarRoot');
         root.parent = parent;
@@ -85,7 +100,6 @@ export class MapBuilder extends Component {
         );
         castleNode.setPosition(pos.x, pos.y + 0.5, pos.z);
 
-        // HP 血条
         this._createHpBar(castleNode, cfg.color, 2.5);
 
         const comp = castleNode.addComponent(Castle);
@@ -113,8 +127,8 @@ export class MapBuilder extends Component {
         return comp;
     }
 
-    // ─── 将坛 ────────────────────────────────────────────────────────────
-    private _buildGeneralAltar(factionRoot: Node, cfg: FactionConfig): GeneralAltar {
+    // ─── 将坛 ─────────────────────────────────────────────────────────── Phase 2
+    private _buildGeneralAltar(factionRoot: Node, cfg: FactionConfig, troopRoot: Node): GeneralAltar {
         const pos = GameManager.inst.mapConfig.generalAltarPositions[cfg.factionId];
         const gaNode = this._createMeshNode(
             factionRoot, `generalAltar_${cfg.factionId}`,
@@ -124,11 +138,63 @@ export class MapBuilder extends Component {
         gaNode.setPosition(pos.x, pos.y + 0.2, pos.z);
 
         const comp = gaNode.addComponent(GeneralAltar);
-        comp.initAltar(cfg.factionId);
+        comp.initAltar(cfg.factionId, troopRoot); // Phase 2: 传入 troopRoot
         return comp;
     }
 
-    // ─── 祭坛 ────────────────────────────────────────────────────────────
+    // ─── Phase 2: 防御塔槽位 ──────────────────────────────────────────────
+    private _buildTowers(factionRoot: Node, cfg: FactionConfig, troopRoot: Node): DefenseTower[] {
+        const towerSlots = (GameManager.inst.mapConfig as any).towerSlots?.[cfg.factionId] ?? [];
+        const towers: DefenseTower[] = [];
+
+        for (const slot of towerSlots) {
+            const isFireTower = slot.type === 'fireTower';
+            // 箭楼：四棱细柱；火油塔：粗矮圆柱
+            const towerNode = this._createMeshNode(
+                factionRoot,
+                `tower_${cfg.factionId}_${slot.id}`,
+                isFireTower
+                    ? primitives.cylinder({ radiusTop: 0.5, radiusBottom: 0.6, height: 0.8, radialSegments: 6 })
+                    : primitives.cylinder({ radiusTop: 0.35, radiusBottom: 0.35, height: 1.2, radialSegments: 4 }),
+                isFireTower ? '#cc4400' : '#888866',
+            );
+            towerNode.setPosition(slot.x, (slot.y ?? 0) + 0.6, slot.z);
+
+            this._createHpBar(towerNode, cfg.color, 1.0);
+
+            const towerType: 'arrowTower' | 'fireTower' = isFireTower ? 'fireTower' : 'arrowTower';
+            const comp = towerNode.addComponent(DefenseTower);
+            comp.initTower(cfg.factionId, String(slot.id), towerType, troopRoot);
+            towers.push(comp);
+        }
+
+        this.towerMap.set(cfg.factionId, towers);
+        return towers;
+    }
+
+    // ─── Phase 2: 市集 ────────────────────────────────────────────────────
+    private _buildMarket(factionRoot: Node, cfg: FactionConfig): Market {
+        const pos = (GameManager.inst.mapConfig as any).marketPositions?.[cfg.factionId]
+            ?? { x: 0, y: 0, z: 0 };
+
+        const mNode = this._createMeshNode(
+            factionRoot,
+            `market_${cfg.factionId}`,
+            primitives.box({ width: 1.2, height: 0.6, length: 1.2 }),
+            '#ffcc44',
+        );
+        mNode.setPosition(pos.x, (pos.y ?? 0) + 0.3, pos.z);
+
+        this._createHpBar(mNode, cfg.color, 1.2);
+
+        const comp = mNode.addComponent(Market);
+        comp.initMarket(cfg.factionId);
+
+        this.marketMap.set(cfg.factionId, comp);
+        return comp;
+    }
+
+    // ─── 定军山祭坛 ──────────────────────────────────────────────────────
     private _buildAltar(parent: Node): Node {
         const altPos = GameManager.inst.mapConfig.altarPosition;
         const radius = GameManager.inst.mapConfig.altarRadius;
@@ -145,9 +211,8 @@ export class MapBuilder extends Component {
         return altarNode;
     }
 
-    // ─── 地基（草地 + 道路简化为整体大平面） ─────────────────────────────
+    // ─── 地基（草地 + 三条河道） ──────────────────────────────────────────
     private _buildTerrain(mapRoot: Node): void {
-        // 草地底板
         const ground = this._createMeshNode(
             mapRoot, 'ground',
             primitives.plane({ width: 50, length: 50 }),
@@ -155,13 +220,12 @@ export class MapBuilder extends Component {
         );
         ground.setPosition(0, -0.01, 0);
 
-        // 三条河道（Plane 水平铺设）
         const rivers = GameManager.inst.mapConfig.rivers;
         for (const r of rivers) {
             const dx = r.end.x - r.start.x;
             const dz = r.end.z - r.start.z;
             const length = Math.sqrt(dx * dx + dz * dz);
-            const angle  = Math.atan2(dx, dz); // 绕 Y 旋转角度
+            const angle  = Math.atan2(dx, dz);
 
             const riverNode = this._createMeshNode(
                 mapRoot, `river_${r.id}`,
@@ -177,7 +241,6 @@ export class MapBuilder extends Component {
 
     // ─── start：程序化构建整个地图 ──────────────────────────────────────
     start(): void {
-        // 等待 GameManager 配置加载完成
         const gm = GameManager.inst;
         if (!gm) return;
 
@@ -188,10 +251,10 @@ export class MapBuilder extends Component {
         mapRoot.parent = scene;
         this._buildTerrain(mapRoot);
 
-        // 祭坛
+        // 定军山祭坛
         this._buildAltar(mapRoot);
 
-        // 地形区域检测
+        // 地形区域检测（河道减速）
         const tzNode = new Node('TerrainZone');
         tzNode.parent = scene;
         tzNode.addComponent(TerrainZone);
@@ -208,23 +271,43 @@ export class MapBuilder extends Component {
             // 主城
             this._buildCastle(factionRoot, cfg);
 
-            // 初始兵营（Slot 0）
+            // 兵营 Slot 0（初始建造，挂载 TroopSpawner）
             const b0 = this._buildBarracks(factionRoot, cfg, 0);
             if (b0) {
                 const spawner = b0.node.addComponent(TroopSpawner);
                 spawner.initSpawner(cfg.factionId, b0.laneKey, this.troopRoot!);
             }
 
-            // Slot 1 预留（不建造，Barracks 组件记录 destroyed 状态）
-            // 将坛
-            this._buildGeneralAltar(factionRoot, cfg);
+            // 兵营 Slot 1（初始不激活，等待玩家/AI 建造）
+            const b1 = this._buildBarracks(factionRoot, cfg, 1);
+
+            // 收集兵营引用供 UI / AI 使用
+            const barracks = ([b0, b1] as Array<Barracks | null>).filter((b): b is Barracks => b !== null);
+            this.barracksMap.set(cfg.factionId, barracks);
+
+            // Phase 2: 将坛（传入 troopRoot）
+            const ga = this._buildGeneralAltar(factionRoot, cfg, this.troopRoot!);
+            this.altarMap.set(cfg.factionId, ga);
+
+            // Phase 2: 防御塔槽位（初始不激活）
+            this._buildTowers(factionRoot, cfg, this.troopRoot!);
+
+            // Phase 2: 市集（初始不激活）
+            this._buildMarket(factionRoot, cfg);
 
             // AI 控制器（非玩家阵营）
             if (!gm.getFactionState(cfg.factionId)?.isPlayer) {
                 const aiNode = new Node(`AI_${cfg.factionId}`);
                 aiNode.parent = scene;
                 const ai = aiNode.addComponent(AIController);
-                ai.initAI(cfg.factionId, factionRoot, this.troopRoot!);
+                ai.initAI(
+                    cfg.factionId,
+                    factionRoot,
+                    this.troopRoot!,
+                    ga,
+                    this.towerMap.get(cfg.factionId) ?? [],
+                    this.marketMap.get(cfg.factionId) ?? null,
+                );
             }
         }
     }

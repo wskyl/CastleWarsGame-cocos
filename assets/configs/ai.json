@@ -3,5 +3,11 @@
   "rebuildGoldThreshold": 50,
   "buildBarracks2GoldThreshold": 200,
   "upgradeGoldThreshold": 80,
-  "upgradeMinTroopsOnField": 5
+  "upgradeMinTroopsOnField": 5,
+  "upgradeTo3GoldThreshold": 150,
+  "upgradeTo3MinTroopsOnField": 10,
+  "buildMarketGoldThreshold": 150,
+  "buildTowerGoldThreshold": 100,
+  "summonGeneralGoldThreshold": 200,
+  "useSkillEnemiesNearby": 3
 }
