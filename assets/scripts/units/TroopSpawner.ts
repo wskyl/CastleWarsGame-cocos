@@ -27,9 +27,11 @@ export class TroopSpawner extends Component {
         this.factionId  = factionId;
         this.laneKey    = laneKey;
         this._troopRoot = troopRoot;
-        this._t1Cfg = GameManager.inst.getTroopConfig(factionId, 1);
-        this._t2Cfg = GameManager.inst.getTroopConfig(factionId, 2);
-        this._t3Cfg = GameManager.inst.getTroopConfig(factionId, 3);
+        const gm = GameManager.inst;
+        if (!gm) { console.error('[TroopSpawner] GameManager not ready'); return; }
+        this._t1Cfg = gm.getTroopConfig(factionId, 1);
+        this._t2Cfg = gm.getTroopConfig(factionId, 2);
+        this._t3Cfg = gm.getTroopConfig(factionId, 3);
     }
 
     upgradeToLevel2(): void { this.level = 2; this._t2Timer = 0; }
@@ -66,10 +68,12 @@ export class TroopSpawner extends Component {
     }
 
     private _trySpawn(cfg: TroopConfig): void {
-        if (!GameManager.inst.spendGold(this.factionId, cfg.spawnCost)) return;
+        const gm = GameManager.inst;
+        if (!gm) return;
+        if (!gm.spendGold(this.factionId, cfg.spawnCost)) return;
         const doSpawn = () => this._doSpawn(cfg);
-        if (!GameManager.inst.canSpawnNow()) {
-            GameManager.inst.enqueueSpawn({ factionId: this.factionId, laneKey: this.laneKey, troopConfig: cfg, callback: doSpawn });
+        if (!gm.canSpawnNow()) {
+            gm.enqueueSpawn({ factionId: this.factionId, laneKey: this.laneKey, troopConfig: cfg, callback: doSpawn });
             return;
         }
         doSpawn();

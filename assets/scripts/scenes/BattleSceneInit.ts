@@ -40,13 +40,16 @@ export class BattleSceneInit extends Component {
             // Phase 2: 初始化将领状态（GeneralState Map）
             gm.initGenerals();
 
-            // 构建地图（MapBuilder 挂在本节点，手动调用 start 进入 loadConfigs 回调流程）
-            const builder = this.node.addComponent(MapBuilder);
+            // 构建地图：MapBuilder 挂载在专用子节点而非 this.node（GameBoot 是持久根节点）
+            // 避免 MapBuilder 随持久节点存活导致再次进入场景时重复构建地图。
+            const mapRootNode = new Node('MapBuilderRoot');
+            mapRootNode.parent = this.node.scene ?? this.node;
+            const builder = mapRootNode.addComponent(MapBuilder);
             builder.start();
 
-            // Phase 2: 初始化路线管理器
+            // Phase 2: 路线管理器挂载在独立子节点
             const routeNode = new Node('RouteRoot');
-            routeNode.parent = this.node;
+            routeNode.parent = mapRootNode;
             const routeManager = routeNode.addComponent(RouteManager);
 
             // 向 BattleUI 注入全部建筑引用（Phase 1 + Phase 2 合并方式）

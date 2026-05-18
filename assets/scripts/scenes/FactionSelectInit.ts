@@ -44,6 +44,8 @@ export class FactionSelectInit extends Component {
     @property(Button) btnConfirm: Button | null = null;
 
     private _selectedFaction: string = 'wei';
+    /** 记录 cardNode 回调引用，供 onDestroy 移除 */
+    private _cardHandlers: Array<() => void> = [];
 
     start(): void {
         // 初始化卡牌
@@ -57,7 +59,10 @@ export class FactionSelectInit extends Component {
             if (title) { title.string = card.displayName; title.color = hexToColor(card.color); }
             if (desc)  desc.string  = card.description;
 
-            cardNode.on(Node.EventType.TOUCH_END, () => this._selectFaction(card.factionId, idx));
+            // 保存 handler 引用以便 onDestroy 时移除，防止内存泄漏
+            const handler = () => this._selectFaction(card.factionId, idx);
+            this._cardHandlers[idx] = handler;
+            cardNode.on(Node.EventType.TOUCH_END, handler, this);
         });
 
         this.btnConfirm?.node.on(Button.EventType.CLICK, this._onConfirm, this);
@@ -65,6 +70,14 @@ export class FactionSelectInit extends Component {
     }
 
     onDestroy(): void {
+        // 移除卡牌触摸监听，防止内存泄漏
+        this.cardNodes.forEach((cardNode, idx) => {
+            const handler = this._cardHandlers[idx];
+            if (cardNode && handler) {
+                cardNode.off(Node.EventType.TOUCH_END, handler, this);
+            }
+        });
+        this._cardHandlers = [];
         this.btnConfirm?.node.off(Button.EventType.CLICK, this._onConfirm, this);
     }
 
