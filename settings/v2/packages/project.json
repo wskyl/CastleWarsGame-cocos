@@ -1,0 +1,15 @@
+{
+  "name": "project",
+  "desc": "\u4e09\u56fd\u4e89\u950b Castle Wars",
+  "startScene": "",
+  "renderPipeline": "",
+  "designResolution": {
+    "width": 960,
+    "height": 640,
+    "policy": 4
+  },
+  "server": {
+    "enabled": false,
+    "port": 7456
+  }
+}
