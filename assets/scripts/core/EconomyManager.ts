@@ -7,9 +7,8 @@
  */
 import { _decorator, Component, director } from 'cc';
 import { GameManager } from './GameManager';
-import { EventManager, GameEvent } from './EventManager';
 
-const { ccclass, property } = _decorator;
+const { ccclass } = _decorator;
 
 // ─── 收入加成记录 ───────────────────────────────────────────────────────────
 export interface IncomeBonus {

@@ -14,7 +14,7 @@
  */
 import {
     _decorator, Component, Node, Vec3, Color, MeshRenderer, Material,
-    primitives, utils, geometry, find,
+    primitives, utils,
 } from 'cc';
 import { GameManager, GamePhase, FactionConfig } from '../core/GameManager';
 import { hexToColor, COLOR_NEUTRAL, COLOR_ROAD, COLOR_GRASS, COLOR_RIVER, FACTION_COLORS } from '../faction/FactionData';
@@ -26,10 +26,9 @@ import { Market } from '../buildings/Market';
 import { TroopSpawner } from '../units/TroopSpawner';
 import { AltarController } from './AltarController';
 import { TerrainZone } from './TerrainZone';
-import { MapManager } from './MapManager';
 import { AIController } from '../ai/AIController';
 
-const { ccclass, property } = _decorator;
+const { ccclass } = _decorator;
 
 @ccclass('MapBuilder')
 export class MapBuilder extends Component {

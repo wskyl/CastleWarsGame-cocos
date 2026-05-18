@@ -16,10 +16,8 @@ const { ccclass } = _decorator;
 export interface IRegisteredUnit {
     /** 所属阵营 */
     readonly factionId: string;
-    /** 挂载节点 */
+    /** 挂载节点（Component.node 满足此接口） */
     readonly node: Node;
-    /** 节点是否仍然有效 */
-    readonly isValid: boolean;
 }
 
 @ccclass('UnitManager')
@@ -102,7 +100,7 @@ export class UnitManager extends Component {
         const result: IRegisteredUnit[] = [];
         const tmp = new Vec3();
         source.forEach(u => {
-            if (!u.isValid || !u.node?.isValid) return;
+            if (!u.node?.isValid) return;
             Vec3.subtract(tmp, u.node.worldPosition, origin);
             if (tmp.lengthSqr() <= r2) result.push(u);
         });
@@ -115,7 +113,7 @@ export class UnitManager extends Component {
         let minDist = Infinity;
         const tmp = new Vec3();
         this._allUnits.forEach(u => {
-            if (!u.isValid || !u.node?.isValid) return;
+            if (!u.node?.isValid) return;
             if (u.factionId === ownerFaction) return;
             Vec3.subtract(tmp, u.node.worldPosition, origin);
             const d = tmp.lengthSqr();
