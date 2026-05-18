@@ -31,6 +31,8 @@ export enum GameEvent {
     BUILDING_REBUILT      = 'BUILDING_REBUILT',
     /** 士兵被击杀：payload: troopTier:number, killedFactionId:string, killerFactionId:string */
     TROOP_KILLED          = 'TROOP_KILLED',
+    /** 行军指令变更，通知 UI 刷新行军路线按钮（无 payload） */
+    MARCH_ORDER_CHANGED   = 'MARCH_ORDER_CHANGED',
 }
 
 // ─── 单例实现 ──────────────────────────────────────────────────────────────
