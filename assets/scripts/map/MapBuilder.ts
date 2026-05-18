@@ -48,6 +48,12 @@ export class MapBuilder extends Component {
     /** 各阵营兵营列表（factionId -> [Slot0, Slot1]） */
     readonly barracksMap: Map<string, Barracks[]> = new Map();
 
+    /**
+     * 防重入标志：BattleSceneInit 手动调用一次 start() 以填充所有 Map 引用，
+     * CC3 引擎随后在下一帧再次调用时直接跳过，避免重复创建节点。
+     */
+    private _built: boolean = false;
+
     // ─── 内部辅助：创建带颜色材质的 MeshRenderer 节点 ─────────────────────
     private _createMeshNode(
         parent: Node,
@@ -241,6 +247,10 @@ export class MapBuilder extends Component {
 
     // ─── start：程序化构建整个地图 ──────────────────────────────────────
     start(): void {
+        // 防止 CC3 引擎在下一帧自动再次调用（BattleSceneInit 已手动调用一次）
+        if (this._built) return;
+        this._built = true;
+
         const gm = GameManager.inst;
         if (!gm) return;
 

@@ -40,11 +40,15 @@ export class BattleSceneInit extends Component {
             // Phase 2: 初始化将领状态（GeneralState Map）
             gm.initGenerals();
 
-            // 构建地图：MapBuilder 挂载在专用子节点而非 this.node（GameBoot 是持久根节点）
-            // 避免 MapBuilder 随持久节点存活导致再次进入场景时重复构建地图。
+            // 构建地图：MapBuilder 挂载到当前活跃场景的根节点（而非持久的 GameBoot 节点），
+            // 使其跟随场景销毁，避免再次进入 Battle.scene 时重复构建。
+            // 使用 director.getScene() 而非 this.node.scene，异步回调中更可靠。
+            const currentScene = director.getScene();
             const mapRootNode = new Node('MapBuilderRoot');
-            mapRootNode.parent = this.node.scene ?? this.node;
+            mapRootNode.parent = currentScene ?? this.node.parent ?? this.node;
             const builder = mapRootNode.addComponent(MapBuilder);
+            // 手动调用 start() 以立即填充 barracksMap/altarMap/towerMap/marketMap，
+            // MapBuilder._built 防止 CC3 引擎下一帧再次自动调用导致重复创建节点。
             builder.start();
 
             // Phase 2: 路线管理器挂载在独立子节点
@@ -60,7 +64,8 @@ export class BattleSceneInit extends Component {
                 }
             }
 
-            // 监听游戏结束，自动跳转结算
+            // 清理旧的 GAME_OVER 监听（场景重入时防止重复注册），再重新注册
+            EventManager.targetOff(this);
             EventManager.on(GameEvent.GAME_OVER, this._onGameOver, this);
         });
     }
