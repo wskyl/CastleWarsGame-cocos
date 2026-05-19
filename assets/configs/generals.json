@@ -1,87 +1,85 @@
-{
-  "list": [
-    {
-      "generalId": "xiahou_dun",
-      "factionId": "wei",
-      "name": "夏侯惇",
-      "hp": 800,
-      "atk": 40,
-      "atkInterval": 1.2,
-      "moveSpeed": 3.5,
-      "atkRange": 2.0,
-      "summonCost": 120,
-      "respawnCooldown": 60,
-      "tags": [
-        "melee",
-        "general"
-      ],
-      "skill": {
-        "name": "威震天下",
-        "description": "所有魏军攻速+30%、伤害+20%，持续8秒",
-        "cooldown": 30,
-        "duration": 8,
-        "type": "faction_buff",
-        "params": {
-          "atkIntervalMult": 0.77,
-          "dmgMult": 1.2
-        }
-      }
-    },
-    {
-      "generalId": "zhao_yun",
-      "factionId": "shu",
-      "name": "赵云",
-      "hp": 700,
-      "atk": 35,
-      "atkInterval": 1.0,
-      "moveSpeed": 4.0,
-      "atkRange": 2.0,
-      "summonCost": 120,
-      "respawnCooldown": 60,
-      "tags": [
-        "melee",
-        "general"
-      ],
-      "skill": {
-        "name": "常山之阵",
-        "description": "无敌3秒并对周围5格内所有敌人造成80点伤害",
-        "cooldown": 30,
-        "duration": 3,
-        "type": "invincible_aoe",
-        "params": {
-          "aoeDamage": 80,
-          "aoeRadius": 5.0
-        }
-      }
-    },
-    {
-      "generalId": "zhou_yu",
-      "factionId": "wu",
-      "name": "周瑜",
-      "hp": 600,
-      "atk": 28,
-      "atkInterval": 1.0,
-      "moveSpeed": 3.5,
-      "atkRange": 6.0,
-      "summonCost": 120,
-      "respawnCooldown": 60,
-      "tags": [
-        "ranged",
-        "general"
-      ],
-      "skill": {
-        "name": "赤壁之火",
-        "description": "对前方10格内所有敌军施加强化灼烧（8伤/秒×5秒）",
-        "cooldown": 30,
-        "duration": 5,
-        "type": "lane_burn",
-        "params": {
-          "burnDmgPerSec": 8,
-          "burnDuration": 5,
-          "burnRange": 10,
-          "burnRadius": 3.0
-        }
+[
+  {
+    "generalId": "xiahou_dun",
+    "factionId": "wei",
+    "name": "夏侯惇",
+    "hp": 800,
+    "atk": 40,
+    "atkInterval": 1.2,
+    "moveSpeed": 3.5,
+    "atkRange": 2.0,
+    "summonCost": 120,
+    "respawnCooldown": 60,
+    "tags": [
+      "melee",
+      "general"
+    ],
+    "skill": {
+      "name": "威震天下",
+      "description": "所有魏军攻速+30%、伤害+20%，持续8秒",
+      "cooldown": 30,
+      "duration": 8,
+      "type": "faction_buff",
+      "params": {
+        "atkIntervalMult": 0.77,
+        "dmgMult": 1.2
       }
     }
-  ]
-}
+  },
+  {
+    "generalId": "zhao_yun",
+    "factionId": "shu",
+    "name": "赵云",
+    "hp": 700,
+    "atk": 35,
+    "atkInterval": 1.0,
+    "moveSpeed": 4.0,
+    "atkRange": 2.0,
+    "summonCost": 120,
+    "respawnCooldown": 60,
+    "tags": [
+      "melee",
+      "general"
+    ],
+    "skill": {
+      "name": "常山之阵",
+      "description": "无敌3秒并对周围5格内所有敌人造成80点伤害",
+      "cooldown": 30,
+      "duration": 3,
+      "type": "invincible_aoe",
+      "params": {
+        "aoeDamage": 80,
+        "aoeRadius": 5.0
+      }
+    }
+  },
+  {
+    "generalId": "zhou_yu",
+    "factionId": "wu",
+    "name": "周瑜",
+    "hp": 600,
+    "atk": 28,
+    "atkInterval": 1.0,
+    "moveSpeed": 3.5,
+    "atkRange": 6.0,
+    "summonCost": 120,
+    "respawnCooldown": 60,
+    "tags": [
+      "ranged",
+      "general"
+    ],
+    "skill": {
+      "name": "赤壁之火",
+      "description": "对前方10格内所有敌军施加强化灼烧（8伤/秒×5秒）",
+      "cooldown": 30,
+      "duration": 5,
+      "type": "lane_burn",
+      "params": {
+        "burnDmgPerSec": 8,
+        "burnDuration": 5,
+        "burnRange": 10,
+        "burnRadius": 3.0
+      }
+    }
+  }
+]
