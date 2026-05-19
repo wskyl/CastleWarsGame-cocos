@@ -1,61 +1,153 @@
 [
   {
+    "__type__": "cc.SceneAsset",
+    "_name": "FactionSelect",
+    "_objFlags": 0,
+    "_native": "",
+    "scene": {
+      "__id__": 1
+    }
+  },
+  {
     "__type__": "cc.Scene",
     "_name": "FactionSelect",
     "_objFlags": 0,
-    "__editorExtras__": {},
     "_parent": null,
     "_children": [],
     "_active": true,
     "_components": [],
     "_prefab": null,
-    "_lpos": { "__type__": "cc.Vec3", "x": 0, "y": 0, "z": 0 },
-    "_lrot": { "__type__": "cc.Quat", "x": 0, "y": 0, "z": 0, "w": 1 },
-    "_lscale": { "__type__": "cc.Vec3", "x": 1, "y": 1, "z": 1 },
-    "_layer": 1073741824,
-    "_euler": { "__type__": "cc.Vec3", "x": 0, "y": 0, "z": 0 },
     "autoReleaseAssets": false,
     "_globals": {
-      "__type__": "cc.SceneGlobals",
-      "ambient": {
-        "__type__": "cc.AmbientInfo",
-        "skyColorHDR": { "__type__": "cc.Vec4", "x": 0.2, "y": 0.5, "z": 1.0, "w": 0.520833125 },
-        "skyColor": { "__type__": "cc.Vec4", "x": 0.2, "y": 0.5, "z": 1.0, "w": 0.520833125 },
-        "skyIllumHDR": 20000,
-        "skyIllum": 20000,
-        "groundAlbedoHDR": { "__type__": "cc.Vec4", "x": 0.2, "y": 0.2, "z": 0.2, "w": 1 },
-        "groundAlbedo": { "__type__": "cc.Vec4", "x": 0.2, "y": 0.2, "z": 0.2, "w": 1 }
-      },
-      "shadows": {
-        "__type__": "cc.ShadowsInfo",
-        "enabled": false,
-        "type": 0,
-        "normal": { "__type__": "cc.Vec3", "x": 0, "y": 1, "z": 0 },
-        "distance": 0,
-        "shadowColor": { "__type__": "cc.Color", "r": 76, "g": 76, "b": 76, "a": 255 },
-        "maxReceived": 4,
-        "size": { "__type__": "cc.Vec2", "x": 512, "y": 512 }
-      },
-      "skybox": {
-        "__type__": "cc.SkyboxInfo",
-        "envLightingType": 0,
-        "envmapHDR": null,
-        "envmap": null,
-        "enabled": false,
-        "useHDR": true
-      },
-      "fog": {
-        "__type__": "cc.FogInfo",
-        "enabled": false,
-        "fogColor": { "__type__": "cc.Color", "r": 200, "g": 200, "b": 200, "a": 255 },
-        "type": 0,
-        "fogDensity": 0,
-        "fogStart": 0,
-        "fogEnd": 0,
-        "fogAtten": 0,
-        "fogTop": 0,
-        "fogRange": 0
-      }
+      "__id__": 2
+    },
+    "_id": "c3d4e5f6-7890-5c1d-def5-345678901234"
+  },
+  {
+    "__type__": "cc.SceneGlobals",
+    "ambient": {
+      "__id__": 3
+    },
+    "shadows": {
+      "__id__": 4
+    },
+    "_skybox": {
+      "__id__": 5
+    },
+    "fog": {
+      "__id__": 6
+    },
+    "octree": {
+      "__id__": 7
+    },
+    "skin": {
+      "__id__": 8
     }
+  },
+  {
+    "__type__": "cc.AmbientInfo",
+    "_skyColorHDR": {
+      "__type__": "cc.Vec4",
+      "x": 0.2,
+      "y": 0.5,
+      "z": 1.0,
+      "w": 0.520833125
+    },
+    "_skyColor": {
+      "__type__": "cc.Vec4",
+      "x": 0.2,
+      "y": 0.5,
+      "z": 1.0,
+      "w": 0.520833125
+    },
+    "_skyIllumHDR": 20000,
+    "_skyIllum": 20000,
+    "_groundAlbedoHDR": {
+      "__type__": "cc.Vec4",
+      "x": 0.2,
+      "y": 0.2,
+      "z": 0.2,
+      "w": 1
+    },
+    "_groundAlbedo": {
+      "__type__": "cc.Vec4",
+      "x": 0.2,
+      "y": 0.2,
+      "z": 0.2,
+      "w": 1
+    }
+  },
+  {
+    "__type__": "cc.ShadowsInfo",
+    "_enabled": false,
+    "_type": 0,
+    "_normal": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 1,
+      "z": 0
+    },
+    "_distance": 0,
+    "_shadowColor": {
+      "__type__": "cc.Color",
+      "r": 76,
+      "g": 76,
+      "b": 76,
+      "a": 255
+    },
+    "_maxReceived": 4,
+    "_size": {
+      "__type__": "cc.Vec2",
+      "x": 512,
+      "y": 512
+    }
+  },
+  {
+    "__type__": "cc.SkyboxInfo",
+    "_envLightingType": 0,
+    "_envmapHDR": null,
+    "_envmap": null,
+    "_enabled": false,
+    "_useHDR": true
+  },
+  {
+    "__type__": "cc.FogInfo",
+    "_enabled": false,
+    "_fogColor": {
+      "__type__": "cc.Color",
+      "r": 200,
+      "g": 200,
+      "b": 200,
+      "a": 255
+    },
+    "_type": 0,
+    "_fogDensity": 0,
+    "_fogStart": 0,
+    "_fogEnd": 0,
+    "_fogAtten": 0,
+    "_fogTop": 0,
+    "_fogRange": 0
+  },
+  {
+    "__type__": "cc.OctreeInfo",
+    "_enabled": false,
+    "_minPos": {
+      "__type__": "cc.Vec3",
+      "x": -1024,
+      "y": -1024,
+      "z": -1024
+    },
+    "_maxPos": {
+      "__type__": "cc.Vec3",
+      "x": 1024,
+      "y": 1024,
+      "z": 1024
+    },
+    "_depth": 8
+  },
+  {
+    "__type__": "cc.SkinInfo",
+    "_enabled": false,
+    "_scale": 5
   }
 ]
