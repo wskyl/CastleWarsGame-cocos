@@ -9,7 +9,7 @@
     "allowJs": false,
     "resolveJsonModule": false,
     "isolatedModules": false,
-    "noLib": true,
+    "lib": ["es2015", "es2016", "es2017", "es2018", "dom"],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "forceConsistentCasingInFileNames": true,
