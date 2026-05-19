@@ -26,7 +26,9 @@ export class Barracks extends Component {
         this.factionId = factionId; this.slotIndex = slotIndex; this.laneKey = laneKey;
         this._maxHp    = GameManager.inst?.buildingConfig?.barracks?.level1Hp ?? 800;
         this._hp       = this._maxHp;
-        this._spawner  = this.node.getComponent(TroopSpawner);
+        // 注意：TroopSpawner 由 MapBuilder 在 initBarracks 调用之后才 addComponent，
+        // 此处不能直接 getComponent，改为在各方法内按需懒加载。
+        this._spawner  = null;
         this._hpBarFg  = this.node.getChildByPath('HpBarRoot/HpFg') ?? null;
         if (slotIndex === 1) { this.isBuilt = false; this.node.active = false; return; }
         this._registerTarget();
@@ -54,7 +56,9 @@ export class Barracks extends Component {
     private _destroy(): void {
         this.isBuilt = false;
         this._hp = 0;  // 确保 HP 归零，防止 hpPercent 返回负值
-        if (this._spawner) this._spawner.destroyed = true;
+        // 懒加载 spawner：initBarracks 时 TroopSpawner 尚未添加，此处按需获取
+        const spawner = this._spawner ?? this.node.getComponent(TroopSpawner);
+        if (spawner) { spawner.destroyed = true; this._spawner = spawner; }
         if (this._target) { GameManager.inst?.unregisterTarget(this._target); this._target = null; }
         EventManager.emit(GameEvent.BUILDING_DESTROYED, 'barracks', this.factionId, this.slotIndex.toString());
         this.node.active = false;
@@ -86,7 +90,11 @@ export class Barracks extends Component {
         if (this.level >= 2 || !this.isBuilt) return false;
         const cost = GameManager.inst?.buildingConfig?.barracks?.upgradeCost ?? 80;
         if (!GameManager.inst?.spendGold(this.factionId, cost)) return false;
-        this.level = 2; this._spawner?.upgradeToLevel2(); return true;
+        this.level = 2;
+        // 懒加载 spawner：initBarracks 时 TroopSpawner 尚未添加
+        if (!this._spawner) this._spawner = this.node.getComponent(TroopSpawner);
+        this._spawner?.upgradeToLevel2();
+        return true;
     }
 
     /** Phase 2: 升级至 3 级（解锁 Tier 3 兵种） */
@@ -94,7 +102,11 @@ export class Barracks extends Component {
         if (this.level >= 3 || !this.isBuilt) return false;
         const cost = GameManager.inst?.buildingConfig?.barracks?.level3UpgradeCost ?? 150;
         if (!GameManager.inst?.spendGold(this.factionId, cost)) return false;
-        this.level = 3; this._spawner?.upgradeToLevel3(); return true;
+        this.level = 3;
+        // 懒加载 spawner：initBarracks 时 TroopSpawner 尚未添加
+        if (!this._spawner) this._spawner = this.node.getComponent(TroopSpawner);
+        this._spawner?.upgradeToLevel3();
+        return true;
     }
 
     private _updateHpBar(): void {

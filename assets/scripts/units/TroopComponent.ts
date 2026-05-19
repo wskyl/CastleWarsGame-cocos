@@ -169,7 +169,8 @@ export class TroopComponent extends Component implements IRegisteredUnit {
         this._atkIntervalMult = this._calcAtkMult(cfg, target);
 
         // Phase 2: 将领 Buff 攻速加成
-        const buff   = GameManager.inst.getGeneralBuff?.(this.factionId);
+        // 注意：GameManager.inst 在 _inst 为 null 时抛出，必须使用 safeInst
+        const buff   = GameManager.safeInst?.getGeneralBuff(this.factionId);
         const interval = cfg.atkInterval * this._atkIntervalMult * (buff?.atkIntervalMult ?? 1.0);
 
         if (cfg.atkRange <= 1.5 && dist > cfg.atkRange) {
@@ -192,8 +193,8 @@ export class TroopComponent extends Component implements IRegisteredUnit {
         const cfg = this.troopConfig!;
         let dmg = cfg.atk;
 
-        // Phase 2: 将领 Buff 伤害加成
-        const buff = GameManager.inst.getGeneralBuff?.(this.factionId);
+        // Phase 2: 将领 Buff 伤害加成（同上，使用 safeInst 避免 null 时抛出）
+        const buff = GameManager.safeInst?.getGeneralBuff(this.factionId);
         if (buff) dmg *= buff.dmgMult;
 
         // Phase 2: 骑兵冲锋首击 ×2

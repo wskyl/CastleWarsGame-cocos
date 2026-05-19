@@ -14,7 +14,7 @@
  */
 import {
     _decorator, Component, Node, Vec3, Color, MeshRenderer, Material,
-    primitives, utils,
+    primitives, utils, director,
 } from 'cc';
 import { GameManager, GamePhase, FactionConfig } from '../core/GameManager';
 import { hexToColor, COLOR_NEUTRAL, COLOR_ROAD, COLOR_GRASS, COLOR_RIVER, FACTION_COLORS } from '../faction/FactionData';
@@ -25,8 +25,10 @@ import { DefenseTower } from '../buildings/DefenseTower';
 import { Market } from '../buildings/Market';
 import { TroopSpawner } from '../units/TroopSpawner';
 import { AltarController } from './AltarController';
+import { MapManager } from './MapManager';
 import { TerrainZone } from './TerrainZone';
 import { AIController } from '../ai/AIController';
+import { UnitManager } from '../core/UnitManager';
 
 const { ccclass } = _decorator;
 
@@ -255,9 +257,24 @@ export class MapBuilder extends Component {
 
         const scene = this.node;
 
+        // ── UnitManager（持久单例，需挂载在场景根节点以允许 addPersistRootNode）──
+        // Battle.scene 的 GameBoot 节点没有挂载 UnitManager，
+        // 此处在场景根节点上动态创建，确保 UnitManager.inst 在整个游戏生命周期可用。
+        if (!UnitManager.inst) {
+            const umNode = new Node('UnitManagerRoot');
+            umNode.parent = director.getScene()!;
+            umNode.addComponent(UnitManager);
+        }
+
         // 地形根
         const mapRoot = new Node('MapRoot');
         mapRoot.parent = scene;
+
+        // ── MapManager（提供路径点 / 地形区域查询，挂载在 mapRoot 上）──
+        // TroopSpawner / AltarController / GeneralAltar 均依赖 MapManager.inst，
+        // 必须在 TroopSpawner.update() 开始前（游戏进入 PLAYING 阶段前）完成初始化。
+        mapRoot.addComponent(MapManager);
+
         this._buildTerrain(mapRoot);
 
         // 定军山祭坛

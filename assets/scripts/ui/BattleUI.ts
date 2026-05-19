@@ -77,7 +77,8 @@ export class BattleUI extends Component {
     private _skillUiTimer: number = 0;
 
     onLoad(): void {
-        this._playerFactionId = GameManager.inst?.playerFactionId ?? 'wei';
+        // GameManager.inst 在 _inst 为 null 时会抛出异常，必须使用 safeInst
+        this._playerFactionId = GameManager.safeInst?.playerFactionId ?? 'wei';
 
         // 监听事件
         EventManager.on(GameEvent.GOLD_CHANGED,        this._onGoldChanged,        this);
@@ -116,8 +117,9 @@ export class BattleUI extends Component {
                 this.scheduleOnce(() => {
                     if (this.countdownLabel) this.countdownLabel.node.active = false;
                 }, 0.8);
-                if (GameManager.inst) {
-                    GameManager.inst.phase = GamePhase.PLAYING;
+                // GameManager.inst 不可用于 truthy 判断，因为它会抛出而非返回 null
+                if (GameManager.safeInst) {
+                    GameManager.safeInst.phase = GamePhase.PLAYING;
                 }
                 EventManager.emit(GameEvent.GAME_STARTED);
                 return;
@@ -134,7 +136,7 @@ export class BattleUI extends Component {
 
         if (this.goldLabel) this.goldLabel.string = `💰 ${gold}`;
 
-        const altarBonus = GameManager.inst?.getFactionState(factionId)?.altarBonus ?? false;
+        const altarBonus = GameManager.safeInst?.getFactionState(factionId)?.altarBonus ?? false;
         if (this.rateLabel) {
             if (altarBonus) {
                 this.rateLabel.string = `+${rate.toFixed(1)}/s ×1.2`;
@@ -150,7 +152,7 @@ export class BattleUI extends Component {
 
     private _onTroopCountChanged(factionId: string, count: number): void {
         if (factionId !== this._playerFactionId) return;
-        const max = GameManager.inst?.mapConfig?.maxTroopsOnField ?? 150;
+        const max = GameManager.safeInst?.mapConfig?.maxTroopsOnField ?? 150;
         if (this.troopLabel) this.troopLabel.string = `⚔️ ${count}/${max}`;
     }
 
@@ -183,7 +185,8 @@ export class BattleUI extends Component {
     }
 
     private _onGameStarted(): void {
-        const gm = GameManager.inst;
+        // 使用 safeInst 避免 GameManager.inst 在 null 时抛出异常
+        const gm = GameManager.safeInst;
         if (!gm) return;
         const gold = gm.getGold(this._playerFactionId);
         const rate = gm.getIncomeRate(this._playerFactionId);
@@ -197,7 +200,7 @@ export class BattleUI extends Component {
     // ─── 操作面板状态 ─────────────────────────────────────────────────
     private _updateActionPanel(gold: number): void {
         if (this._playerEliminated) return;
-        const gm = GameManager.inst;
+        const gm = GameManager.safeInst;
 
         // — Phase 1 按钮 —
         const buildCost    = gm?.buildingConfig?.barracks?.buildCost    ?? 50;
@@ -285,8 +288,8 @@ export class BattleUI extends Component {
         // 玩家出局倒计时
         if (this._playerEliminated) {
             this._eliminatedTimer -= dt;
-            if (this._eliminatedTimer <= 0 && GameManager.inst?.phase !== GamePhase.GAME_OVER) {
-                GameManager.inst!.phase = GamePhase.GAME_OVER;
+            if (this._eliminatedTimer <= 0 && GameManager.safeInst?.phase !== GamePhase.GAME_OVER) {
+                GameManager.safeInst!.phase = GamePhase.GAME_OVER;
                 director.loadScene('Result');
             }
             return;
@@ -302,7 +305,7 @@ export class BattleUI extends Component {
 
     private _updateSkillButton(): void {
         if (!this.btnUseSkill || !this.lblUseSkill) return;
-        const gm = GameManager.inst;
+        const gm = GameManager.safeInst;
         const gs = gm?.getGeneralState(this._playerFactionId);
         const skillCfg = gm?.generalsConfig.find(g => g.factionId === this._playerFactionId)?.skill;
         if (!gs?.onField || !skillCfg) {
@@ -340,7 +343,7 @@ export class BattleUI extends Component {
     /** Phase 2: 召唤将领 */
     onClickSummonGeneral(): void {
         if (!this._generalAltar) return;
-        const gm = GameManager.inst;
+        const gm = GameManager.safeInst;
         // 从 mapConfig 获取 laneKey；默认第一条路线
         const slots = gm?.mapConfig?.barracksSlots?.[this._playerFactionId] ?? [];
         const laneKey = slots[0]?.laneKey;
@@ -357,7 +360,7 @@ export class BattleUI extends Component {
     onClickBuildMarket(): void {
         if (!this._market || this._market.isBuilt) return;
         this._market.build();
-        const gold = GameManager.inst?.getGold(this._playerFactionId) ?? 0;
+        const gold = GameManager.safeInst?.getGold(this._playerFactionId) ?? 0;
         this._updateActionPanel(gold);
     }
 
@@ -366,7 +369,7 @@ export class BattleUI extends Component {
         const nextTower = this._towers.find(t => !t.isBuilt);
         if (!nextTower) return;
         nextTower.build();
-        const gold = GameManager.inst?.getGold(this._playerFactionId) ?? 0;
+        const gold = GameManager.safeInst?.getGold(this._playerFactionId) ?? 0;
         this._updateActionPanel(gold);
     }
 
