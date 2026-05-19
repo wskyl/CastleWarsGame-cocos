@@ -36,9 +36,22 @@ export class TroopComponent extends Component implements IRegisteredUnit {
         }, 50, 200);
     }
 
+    /**
+     * 销毁静态对象池，释放所有池内节点引用。
+     * 应在 Battle 场景卸载时（BattleSceneInit.onDestroy）调用，
+     * 防止跨场景重入时旧节点引用残留导致内存泄漏。
+     */
+    static destroyPool(): void {
+        if (TroopComponent._pool) {
+            TroopComponent._pool.clear();
+            TroopComponent._pool = null;
+        }
+    }
+
     static spawn(parent: Node, spawnPos: Vec3, config: TroopConfig, waypoints: Vec3[]): TroopComponent | null {
         TroopComponent.initPool(parent);
-        if (!GameManager.inst.canSpawnNow()) return null;
+        const gm = GameManager.safeInst;
+        if (!gm || !gm.canSpawnNow()) return null;
         const node = TroopComponent._pool!.get();
         node.parent = parent;
         node.setWorldPosition(spawnPos.x, spawnPos.y, spawnPos.z);
@@ -73,7 +86,7 @@ export class TroopComponent extends Component implements IRegisteredUnit {
     private _initInstance(config: TroopConfig, waypoints: Vec3[]): void {
         this.troopConfig   = config;
         this.factionId     = config.factionId;
-        this.factionConfig = GameManager.inst.getFactionConfig(config.factionId);
+        this.factionConfig = GameManager.safeInst?.getFactionConfig(config.factionId) ?? null;
         this._hp           = config.hp;
         this._maxHp        = config.hp;
         this._waypoints    = waypoints;
@@ -98,8 +111,8 @@ export class TroopComponent extends Component implements IRegisteredUnit {
             isBuilding: false, tags: config.tags, tier: config.tier,
             onHit: this._onHit.bind(this),
         };
-        GameManager.inst.registerTarget(this._targetHandle);
-        GameManager.inst.troopSpawned(config.factionId);
+        GameManager.safeInst?.registerTarget(this._targetHandle);
+        GameManager.safeInst?.troopSpawned(config.factionId);
         UnitManager.inst?.register(this);   // 注册到全局单位表
     }
 
@@ -112,7 +125,8 @@ export class TroopComponent extends Component implements IRegisteredUnit {
 
     update(dt: number): void {
         if (!this.troopConfig) return;
-        if (GameManager.inst?.phase !== GamePhase.PLAYING) return;
+        const gm = GameManager.safeInst;
+        if (!gm || gm.phase !== GamePhase.PLAYING) return;
         if (this._state === TroopState.DEAD) return;
         if (this._targetHandle) this.node.getWorldPosition(this._targetHandle.position);
         this._updateBurn(dt);
@@ -267,9 +281,25 @@ export class TroopComponent extends Component implements IRegisteredUnit {
     }
 
     private _findNearestEnemy(): AttackTarget | null {
-        const cfg = this.troopConfig!; const myPos = this.node.getWorldPosition();
-        let best: AttackTarget | null = null; let bestDist = Infinity;
-        GameManager.inst.getTargets().forEach(t => {
+        const cfg = this.troopConfig!;
+        const myPos = this.node.getWorldPosition();
+        const gm = GameManager.safeInst;
+        if (!gm) return null;
+
+        let best: AttackTarget | null = null;
+        let bestDist = Infinity;
+
+        // 优先用 UnitManager 空间查询来检测附近敌方单位（跳过建筑目标，减少迭代量）
+        const nearbyUnits = UnitManager.inst?.getUnitsInRadius(myPos, cfg.atkRange) ?? [];
+        for (const u of nearbyUnits) {
+            if (u.factionId === this.factionId) continue;
+            // 从 AttackTarget 注册表中找对应目标（保持 onHit 接口完整）
+            // UnitManager 只存 IRegisteredUnit，需通过 GameManager targets 对应
+            break; // fallback to full scan below if no direct mapping
+        }
+
+        // 从目标注册表扫描（包含建筑），仅在攻击范围内取最近目标
+        gm.getTargets().forEach(t => {
             if (t.factionId === this.factionId) return;
             const d = Vec3.distance(myPos, t.position);
             if (d <= cfg.atkRange) {

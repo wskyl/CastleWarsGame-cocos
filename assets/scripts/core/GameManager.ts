@@ -66,7 +66,18 @@ export interface AttackTarget {
 @ccclass('GameManager')
 export class GameManager extends Component {
     private static _inst: GameManager | null = null;
-    static get inst(): GameManager { return GameManager._inst!; }
+    /**
+     * 非空断言访问器：调用方需确保 GameManager 已完成 onLoad 初始化。
+     * 未初始化时会抛出明确错误，便于排查生命周期问题。
+     */
+    static get inst(): GameManager {
+        if (!GameManager._inst) {
+            throw new Error('[GameManager] inst accessed before onLoad. Ensure GameManager is mounted and onLoad has run.');
+        }
+        return GameManager._inst;
+    }
+    /** 安全访问器：未初始化时返回 null，适用于可选依赖场景。 */
+    static get safeInst(): GameManager | null { return GameManager._inst; }
 
     // ── Phase 1 配置 ──
     factionsConfig: FactionConfig[]  = [];
@@ -129,18 +140,60 @@ export class GameManager extends Component {
         }
     }
 
-    /** 加载所有配置文件（Phase 1: 6 个 + Phase 2: 2 个 = 8 个） */
+    /**
+     * 加载所有配置文件（Phase 1: 6 个 + Phase 2: 2 个 = 8 个）。
+     * 修复：无论成功还是失败都调用 done()，确保 onReady 始终触发；
+     *       加载失败时输出明确错误日志，避免静默失败难以排查。
+     */
     loadConfigs(onReady: () => void): void {
         let pending = 8;
-        const done = () => { if (--pending === 0) onReady(); };
-        resources.load('configs/factions',  JsonAsset, (e, a) => { if (!e) this.factionsConfig  = a.json as FactionConfig[];  done(); });
-        resources.load('configs/troops',    JsonAsset, (e, a) => { if (!e) this.troopsConfig    = a.json as TroopConfig[];    done(); });
-        resources.load('configs/buildings', JsonAsset, (e, a) => { if (!e) this.buildingConfig   = a.json as BuildingConfig;   done(); });
-        resources.load('configs/economy',   JsonAsset, (e, a) => { if (!e) this.economyConfig    = a.json as EconomyConfig;    done(); });
-        resources.load('configs/map',       JsonAsset, (e, a) => { if (!e) this.mapConfig         = a.json as MapConfig;        done(); });
-        resources.load('configs/ai',        JsonAsset, (e, a) => { if (!e) this.aiConfig          = a.json as AiConfig;         done(); });
-        resources.load('configs/generals',  JsonAsset, (e, a) => { if (!e) this.generalsConfig   = a.json as GeneralConfig[];  done(); });
-        resources.load('configs/towers',    JsonAsset, (e, a) => { if (!e) this.towersConfig      = a.json as TowerConfig;      done(); });
+        let hasError = false;
+
+        const done = (configName: string, err: Error | null) => {
+            if (err) {
+                hasError = true;
+                console.error(`[GameManager] Failed to load config "${configName}":`, err);
+            }
+            if (--pending === 0) {
+                if (hasError) {
+                    console.warn('[GameManager] Some configs failed to load; game may not function correctly.');
+                }
+                onReady();
+            }
+        };
+
+        resources.load('configs/factions',  JsonAsset, (e, a) => {
+            if (!e) this.factionsConfig  = a.json as FactionConfig[];
+            done('factions', e);
+        });
+        resources.load('configs/troops',    JsonAsset, (e, a) => {
+            if (!e) this.troopsConfig    = a.json as TroopConfig[];
+            done('troops', e);
+        });
+        resources.load('configs/buildings', JsonAsset, (e, a) => {
+            if (!e) this.buildingConfig  = a.json as BuildingConfig;
+            done('buildings', e);
+        });
+        resources.load('configs/economy',   JsonAsset, (e, a) => {
+            if (!e) this.economyConfig   = a.json as EconomyConfig;
+            done('economy', e);
+        });
+        resources.load('configs/map',       JsonAsset, (e, a) => {
+            if (!e) this.mapConfig       = a.json as MapConfig;
+            done('map', e);
+        });
+        resources.load('configs/ai',        JsonAsset, (e, a) => {
+            if (!e) this.aiConfig        = a.json as AiConfig;
+            done('ai', e);
+        });
+        resources.load('configs/generals',  JsonAsset, (e, a) => {
+            if (!e) this.generalsConfig  = a.json as GeneralConfig[];
+            done('generals', e);
+        });
+        resources.load('configs/towers',    JsonAsset, (e, a) => {
+            if (!e) this.towersConfig    = a.json as TowerConfig;
+            done('towers', e);
+        });
     }
 
     initFactions(playerFactionId: string): void {
