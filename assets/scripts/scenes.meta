@@ -1,0 +1,15 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "uuid": "b852b976-b98d-52a7-9f23-1d4e3cce6edf",
+  "files": [
+    "BattleSceneInit",
+    "FactionSelectInit",
+    "MainMenuInit"
+  ],
+  "subMetas": {},
+  "userData": {
+    "compressionType": {},
+    "isRemoteBundle": {}
+  }
+}

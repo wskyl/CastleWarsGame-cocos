@@ -10,6 +10,7 @@ import {
 import { GameManager, AttackTarget, TroopConfig, GamePhase } from '../core/GameManager';
 import { EventManager, GameEvent } from '../core/EventManager';
 import { ObjectPool } from '../core/ObjectPool';
+import { UnitManager, IRegisteredUnit } from '../core/UnitManager';
 import { hexToColor, FACTION_COLORS } from '../faction/FactionData';
 import { Projectile } from './Projectile';
 
@@ -20,7 +21,7 @@ export enum TroopState { MARCHING = 'MARCHING', COMBAT = 'COMBAT', DEAD = 'DEAD'
 interface BurnDOT { dmgPerSec: number; remaining: number; timer: number; }
 
 @ccclass('TroopComponent')
-export class TroopComponent extends Component {
+export class TroopComponent extends Component implements IRegisteredUnit {
     private static _pool: ObjectPool | null = null;
 
     static initPool(parent: Node): void {
@@ -99,10 +100,12 @@ export class TroopComponent extends Component {
         };
         GameManager.inst.registerTarget(this._targetHandle);
         GameManager.inst.troopSpawned(config.factionId);
+        UnitManager.inst?.register(this);   // 注册到全局单位表
     }
 
     onDisable(): void {
         if (this._targetHandle) { GameManager.inst?.unregisterTarget(this._targetHandle); this._targetHandle = null; }
+        UnitManager.inst?.unregister(this);  // 从全局单位表注销
     }
 
     setRiverDebuff(mult: number): void { this._speedMult = mult; }

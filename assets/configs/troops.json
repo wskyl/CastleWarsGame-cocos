@@ -11,7 +11,10 @@
     "atkRange": 1.5,
     "spawnCost": 5,
     "spawnInterval": 3,
-    "tags": ["melee", "light_armor"],
+    "tags": [
+      "melee",
+      "light_armor"
+    ],
     "special": ""
   },
   {
@@ -26,7 +29,9 @@
     "atkRange": 6.0,
     "spawnCost": 12,
     "spawnInterval": 6,
-    "tags": ["ranged"],
+    "tags": [
+      "ranged"
+    ],
     "special": "building_bonus_1.5"
   },
   {
@@ -41,7 +46,11 @@
     "atkRange": 1.5,
     "spawnCost": 20,
     "spawnInterval": 10,
-    "tags": ["melee", "cavalry", "light_armor"],
+    "tags": [
+      "melee",
+      "cavalry",
+      "light_armor"
+    ],
     "special": "cavalry_charge"
   },
   {
@@ -56,7 +65,10 @@
     "atkRange": 1.5,
     "spawnCost": 5,
     "spawnInterval": 3,
-    "tags": ["melee", "light_armor"],
+    "tags": [
+      "melee",
+      "light_armor"
+    ],
     "special": ""
   },
   {
@@ -71,7 +83,9 @@
     "atkRange": 5.0,
     "spawnCost": 12,
     "spawnInterval": 4,
-    "tags": ["ranged"],
+    "tags": [
+      "ranged"
+    ],
     "special": "melee_bonus_1.2"
   },
   {
@@ -86,7 +100,10 @@
     "atkRange": 1.5,
     "spawnCost": 20,
     "spawnInterval": 10,
-    "tags": ["melee", "heavy_armor"],
+    "tags": [
+      "melee",
+      "heavy_armor"
+    ],
     "special": "iron_guard_0.7"
   },
   {
@@ -101,7 +118,10 @@
     "atkRange": 1.5,
     "spawnCost": 5,
     "spawnInterval": 3,
-    "tags": ["melee", "light_armor"],
+    "tags": [
+      "melee",
+      "light_armor"
+    ],
     "special": ""
   },
   {
@@ -116,7 +136,9 @@
     "atkRange": 5.0,
     "spawnCost": 12,
     "spawnInterval": 4,
-    "tags": ["ranged"],
+    "tags": [
+      "ranged"
+    ],
     "special": "burn_3dmg_3sec,building_bonus_1.3"
   },
   {
@@ -131,7 +153,10 @@
     "atkRange": 7.0,
     "spawnCost": 20,
     "spawnInterval": 10,
-    "tags": ["ranged", "fire_volley"],
+    "tags": [
+      "ranged",
+      "fire_volley"
+    ],
     "special": "fire_volley_aoe_1.5,burn_3dmg_3sec"
   }
 ]

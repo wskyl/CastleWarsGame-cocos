@@ -6,7 +6,7 @@
  */
 import {
     _decorator, Component, Node, Label, Button, Color,
-    EventTarget, UIOpacity, tween, Vec3,
+    EventTarget, UIOpacity, tween, Vec3, director,
 } from 'cc';
 import { GameManager, GamePhase, FactionState } from '../core/GameManager';
 import { EventManager, GameEvent } from '../core/EventManager';
@@ -287,7 +287,6 @@ export class BattleUI extends Component {
             this._eliminatedTimer -= dt;
             if (this._eliminatedTimer <= 0 && GameManager.inst?.phase !== GamePhase.GAME_OVER) {
                 GameManager.inst!.phase = GamePhase.GAME_OVER;
-                const { director } = require('cc');
                 director.loadScene('Result');
             }
             return;

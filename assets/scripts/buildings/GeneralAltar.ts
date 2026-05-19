@@ -77,8 +77,7 @@ export class GeneralAltar extends Component {
         mat.setProperty('mainColor', col); mat.setProperty('albedo', col);
         mr.setMaterial(mat, 0);
 
-        const { utils: ccUtils, primitives: ccPrimitives } = require('cc');
-        mr.mesh = ccUtils.createMesh(ccPrimitives.sphere({ radius: 0.5, segments: 10 }));
+        mr.mesh = utils.createMesh(primitives.sphere({ radius: 0.5, segments: 10 }));
 
         // 出生位置（路径第一点）
         gNode.setWorldPosition(wps[0].x, 0.5, wps[0].z);

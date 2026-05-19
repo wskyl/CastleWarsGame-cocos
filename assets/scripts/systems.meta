@@ -1,0 +1,14 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "uuid": "012d1453-39c6-5eff-aea8-b7bb88b08580",
+  "files": [
+    "AudioManager",
+    "RouteManager"
+  ],
+  "subMetas": {},
+  "userData": {
+    "compressionType": {},
+    "isRemoteBundle": {}
+  }
+}

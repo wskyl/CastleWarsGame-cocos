@@ -115,9 +115,18 @@ export class GameManager extends Component {
 
     // ─────────────────────────────────────────────────────────────────────
     onLoad(): void {
-        if (GameManager._inst && GameManager._inst !== this) { this.destroy(); return; }
+        // 若已存在不同实例（例如 Battle 场景 GameBoot 和跨场景持久节点同时存在），
+        // 销毁多余组件，保留第一个实例，避免 __cid__ 重复注册警告。
+        if (GameManager._inst && GameManager._inst !== this) {
+            this.destroy();
+            return;
+        }
         GameManager._inst = this;
-        director.addPersistRootNode(this.node);
+        // 仅在节点尚未进入持久列表时才调用 addPersistRootNode，
+        // 防止热重载或多次场景加载时重复注册（触发 __cid__ 警告）。
+        if (!director.isPersistRootNode(this.node)) {
+            director.addPersistRootNode(this.node);
+        }
     }
 
     /** 加载所有配置文件（Phase 1: 6 个 + Phase 2: 2 个 = 8 个） */

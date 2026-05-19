@@ -3,9 +3,10 @@
  * Battle 场景启动入口：
  *   1. 从 localStorage 读取玩家阵营
  *   2. 加载所有配置（GameManager.loadConfigs）
- *   3. 初始化阵营状态
+ *   3. 初始化阵营状态 + 将领状态
  *   4. 调用 MapBuilder 构建整个地图与建筑
- *   5. 启动 BattleUI 倒计时
+ *   5. 向 BattleUI 注入所有 Phase 2 建筑引用
+ *   6. 启动 BattleUI 倒计时
  * 挂载于 Battle.scene 的 GameBoot 节点（同时也挂载 GameManager、MapManager、FactionManager）。
  */
 import { _decorator, Component, Node, director, find, sys } from 'cc';
@@ -13,7 +14,7 @@ import { GameManager, GamePhase } from '../core/GameManager';
 import { EventManager, GameEvent } from '../core/EventManager';
 import { MapBuilder } from '../map/MapBuilder';
 import { BattleUI } from '../ui/BattleUI';
-import { Barracks } from '../buildings/Barracks';
+import { RouteManager } from '../systems/RouteManager';
 
 const { ccclass, property } = _decorator;
 
@@ -31,21 +32,46 @@ export class BattleSceneInit extends Component {
             return;
         }
 
-        // 加载所有 JSON 配置，完成后初始化
+        // 加载所有 JSON 配置（Phase 1 + Phase 2 共 8 个），完成后初始化
         gm.loadConfigs(() => {
+            // 初始化阵营状态
             gm.initFactions(playerFaction);
 
-            // 构建地图（MapBuilder 挂在本节点）
-            const builder = this.node.addComponent(MapBuilder);
-            builder.start(); // 手动调用（因已在 start 流程中）
+            // Phase 2: 初始化将领状态（GeneralState Map）
+            gm.initGenerals();
 
-            // 监听游戏结束，自动跳转结算
+            // 构建地图：MapBuilder 挂载到当前活跃场景的根节点（而非持久的 GameBoot 节点），
+            // 使其跟随场景销毁，避免再次进入 Battle.scene 时重复构建。
+            // 使用 director.getScene() 而非 this.node.scene，异步回调中更可靠。
+            const currentScene = director.getScene();
+            const mapRootNode = new Node('MapBuilderRoot');
+            mapRootNode.parent = currentScene ?? this.node.parent ?? this.node;
+            const builder = mapRootNode.addComponent(MapBuilder);
+            // 手动调用 start() 以立即填充 barracksMap/altarMap/towerMap/marketMap，
+            // MapBuilder._built 防止 CC3 引擎下一帧再次自动调用导致重复创建节点。
+            builder.start();
+
+            // Phase 2: 路线管理器挂载在独立子节点
+            const routeNode = new Node('RouteRoot');
+            routeNode.parent = mapRootNode;
+            const routeManager = routeNode.addComponent(RouteManager);
+
+            // 向 BattleUI 注入全部建筑引用（Phase 1 + Phase 2 合并方式）
+            if (this.battleUINode) {
+                const ui = this.battleUINode.getComponent(BattleUI);
+                if (ui) {
+                    ui.injectFromMapBuilder(builder, routeManager);
+                }
+            }
+
+            // 清理旧的 GAME_OVER 监听（场景重入时防止重复注册），再重新注册
+            EventManager.targetOff(this);
             EventManager.on(GameEvent.GAME_OVER, this._onGameOver, this);
         });
     }
 
     private _onGameOver(_winnerId: string): void {
-        // 延迟 1 秒后跳结算，让动画播完
+        // 延迟 1 秒后跳结算，让结束动画播完
         this.scheduleOnce(() => {
             director.loadScene('Result');
         }, 1.0);

@@ -10,7 +10,10 @@
     "atkRange": 2.0,
     "summonCost": 120,
     "respawnCooldown": 60,
-    "tags": ["melee", "general"],
+    "tags": [
+      "melee",
+      "general"
+    ],
     "skill": {
       "name": "威震天下",
       "description": "所有魏军攻速+30%、伤害+20%，持续8秒",
@@ -34,7 +37,10 @@
     "atkRange": 2.0,
     "summonCost": 120,
     "respawnCooldown": 60,
-    "tags": ["melee", "general"],
+    "tags": [
+      "melee",
+      "general"
+    ],
     "skill": {
       "name": "常山之阵",
       "description": "无敌3秒并对周围5格内所有敌人造成80点伤害",
@@ -58,7 +64,10 @@
     "atkRange": 6.0,
     "summonCost": 120,
     "respawnCooldown": 60,
-    "tags": ["ranged", "general"],
+    "tags": [
+      "ranged",
+      "general"
+    ],
     "skill": {
       "name": "赤壁之火",
       "description": "对前方10格内所有敌军施加强化灼烧（8伤/秒×5秒）",

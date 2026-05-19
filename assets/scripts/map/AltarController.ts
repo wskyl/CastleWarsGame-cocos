@@ -13,7 +13,7 @@ import { EventManager, GameEvent } from '../core/EventManager';
 import { MapManager } from './MapManager';
 import { hexToColor, FACTION_COLORS, COLOR_NEUTRAL } from '../faction/FactionData';
 
-const { ccclass, property } = _decorator;
+const { ccclass } = _decorator;
 
 enum AltarState {
     NEUTRAL    = 'NEUTRAL',

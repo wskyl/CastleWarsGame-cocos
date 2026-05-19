@@ -1,0 +1,17 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "uuid": "6b98b405-78d0-59e1-bc42-be2e786efeef",
+  "files": [
+    "Barracks",
+    "Castle",
+    "DefenseTower",
+    "GeneralAltar",
+    "Market"
+  ],
+  "subMetas": {},
+  "userData": {
+    "compressionType": {},
+    "isRemoteBundle": {}
+  }
+}
