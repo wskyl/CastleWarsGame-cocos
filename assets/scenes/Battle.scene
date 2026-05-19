@@ -161,7 +161,9 @@
     "__type__": "cc.Node",
     "_name": "BattleUI",
     "_objFlags": 0,
-    "_parent": null,
+    "_parent": {
+      "__id__": 1
+    },
     "_children": [
       {
         "__id__": 10
@@ -2822,7 +2824,7 @@
     }
   },
   {
-    "__type__": "BattleUI",
+    "__type__": "67c59601-66d1-59e0-aa85-59a5870b1c6b",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -2904,7 +2906,9 @@
     "__type__": "cc.Node",
     "_name": "GameBoot",
     "_objFlags": 0,
-    "_parent": null,
+    "_parent": {
+      "__id__": 1
+    },
     "_children": [],
     "_active": true,
     "_components": [
@@ -2944,7 +2948,7 @@
     "_id": "1f056afb-9535-46ea-be3b-a1c3b6d771c6"
   },
   {
-    "__type__": "GameManager",
+    "__type__": "1534cf9d-815e-5cc4-b2b7-04e1eccbbd4a",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -2954,7 +2958,7 @@
     "__prefab": null
   },
   {
-    "__type__": "BattleSceneInit",
+    "__type__": "07b7d799-fbf1-5a10-9766-f47acf07f852",
     "_name": "",
     "_objFlags": 0,
     "node": {

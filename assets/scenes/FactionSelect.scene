@@ -158,7 +158,9 @@
     "__type__": "cc.Node",
     "_name": "Canvas",
     "_objFlags": 0,
-    "_parent": null,
+    "_parent": {
+      "__id__": 1
+    },
     "_children": [
       {
         "__id__": 10
@@ -1405,7 +1407,7 @@
     }
   },
   {
-    "__type__": "FactionSelectInit",
+    "__type__": "37e5c162-aa53-523c-ba67-4d54e905197a",
     "_name": "",
     "_objFlags": 0,
     "node": {
