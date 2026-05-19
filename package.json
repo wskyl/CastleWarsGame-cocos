@@ -2,6 +2,9 @@
   "name": "castle-wars-game-cocos",
   "uuid": "ad82a305-6502-5d4f-a8a8-240c1572b4ca",
   "version": "1.0.0",
+  "creator": {
+    "version": "3.8.5"
+  },
   "editor": ">=3.8.0",
   "scripts": {
     "dev": "node preview-server.js",
