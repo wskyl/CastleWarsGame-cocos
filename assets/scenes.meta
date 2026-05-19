@@ -1,12 +1,11 @@
 {
   "ver": "1.2.0",
   "importer": "directory",
-  "uuid": "6c1cd87c-908f-5588-a998-649054b60ce1",
+  "uuid": "a1b2c3d4-5678-5a9b-bcd3-123456789012",
   "files": [
-    "AltarController",
-    "MapBuilder",
-    "MapManager",
-    "TerrainZone"
+    "MainMenu",
+    "FactionSelect",
+    "Battle"
   ],
   "subMetas": {},
   "userData": {

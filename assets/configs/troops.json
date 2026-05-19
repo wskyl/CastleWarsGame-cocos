@@ -1,137 +1,164 @@
-[
-  {
-    "troopId": "wei_t1",
-    "factionId": "wei",
-    "tier": 1,
-    "name": "刀盾兵",
-    "hp": 120,
-    "atk": 12,
-    "atkInterval": 1.0,
-    "moveSpeed": 2.5,
-    "atkRange": 1.5,
-    "spawnCost": 5,
-    "spawnInterval": 3,
-    "tags": ["melee", "light_armor"],
-    "special": ""
-  },
-  {
-    "troopId": "wei_t2",
-    "factionId": "wei",
-    "tier": 2,
-    "name": "霹雳车",
-    "hp": 80,
-    "atk": 25,
-    "atkInterval": 3.0,
-    "moveSpeed": 1.5,
-    "atkRange": 6.0,
-    "spawnCost": 12,
-    "spawnInterval": 6,
-    "tags": ["ranged"],
-    "special": "building_bonus_1.5"
-  },
-  {
-    "troopId": "wei_t3",
-    "factionId": "wei",
-    "tier": 3,
-    "name": "虎豹骑",
-    "hp": 220,
-    "atk": 32,
-    "atkInterval": 0.9,
-    "moveSpeed": 4.5,
-    "atkRange": 1.5,
-    "spawnCost": 20,
-    "spawnInterval": 10,
-    "tags": ["melee", "cavalry", "light_armor"],
-    "special": "cavalry_charge"
-  },
-  {
-    "troopId": "shu_t1",
-    "factionId": "shu",
-    "tier": 1,
-    "name": "轻步兵",
-    "hp": 100,
-    "atk": 10,
-    "atkInterval": 1.0,
-    "moveSpeed": 3.0,
-    "atkRange": 1.5,
-    "spawnCost": 5,
-    "spawnInterval": 3,
-    "tags": ["melee", "light_armor"],
-    "special": ""
-  },
-  {
-    "troopId": "shu_t2",
-    "factionId": "shu",
-    "tier": 2,
-    "name": "弩手",
-    "hp": 70,
-    "atk": 18,
-    "atkInterval": 1.5,
-    "moveSpeed": 2.5,
-    "atkRange": 5.0,
-    "spawnCost": 12,
-    "spawnInterval": 4,
-    "tags": ["ranged"],
-    "special": "melee_bonus_1.2"
-  },
-  {
-    "troopId": "shu_t3",
-    "factionId": "shu",
-    "tier": 3,
-    "name": "白毦兵",
-    "hp": 190,
-    "atk": 28,
-    "atkInterval": 1.0,
-    "moveSpeed": 3.5,
-    "atkRange": 1.5,
-    "spawnCost": 20,
-    "spawnInterval": 10,
-    "tags": ["melee", "heavy_armor"],
-    "special": "iron_guard_0.7"
-  },
-  {
-    "troopId": "wu_t1",
-    "factionId": "wu",
-    "tier": 1,
-    "name": "轻装剑士",
-    "hp": 90,
-    "atk": 11,
-    "atkInterval": 0.9,
-    "moveSpeed": 3.0,
-    "atkRange": 1.5,
-    "spawnCost": 5,
-    "spawnInterval": 3,
-    "tags": ["melee", "light_armor"],
-    "special": ""
-  },
-  {
-    "troopId": "wu_t2",
-    "factionId": "wu",
-    "tier": 2,
-    "name": "火弓手",
-    "hp": 75,
-    "atk": 15,
-    "atkInterval": 1.2,
-    "moveSpeed": 2.5,
-    "atkRange": 5.0,
-    "spawnCost": 12,
-    "spawnInterval": 4,
-    "tags": ["ranged"],
-    "special": "burn_3dmg_3sec,building_bonus_1.3"
-  },
-  {
-    "troopId": "wu_t3",
-    "factionId": "wu",
-    "tier": 3,
-    "name": "解烦军",
-    "hp": 170,
-    "atk": 24,
-    "atkInterval": 0.8,
-    "moveSpeed": 2.5,
-    "atkRange": 7.0,
-    "spawnCost": 20,
-    "spawnInterval": 10,
-    "tags": ["ranged", "fire_volley"],
-    "special": "fire_volley_aoe_1.5,burn_3dmg_3sec"
-  }
-]
+{
+  "list": [
+    {
+      "troopId": "wei_t1",
+      "factionId": "wei",
+      "tier": 1,
+      "name": "刀盾兵",
+      "hp": 120,
+      "atk": 12,
+      "atkInterval": 1.0,
+      "moveSpeed": 2.5,
+      "atkRange": 1.5,
+      "spawnCost": 5,
+      "spawnInterval": 3,
+      "tags": [
+        "melee",
+        "light_armor"
+      ],
+      "special": ""
+    },
+    {
+      "troopId": "wei_t2",
+      "factionId": "wei",
+      "tier": 2,
+      "name": "霹雳车",
+      "hp": 80,
+      "atk": 25,
+      "atkInterval": 3.0,
+      "moveSpeed": 1.5,
+      "atkRange": 6.0,
+      "spawnCost": 12,
+      "spawnInterval": 6,
+      "tags": [
+        "ranged"
+      ],
+      "special": "building_bonus_1.5"
+    },
+    {
+      "troopId": "wei_t3",
+      "factionId": "wei",
+      "tier": 3,
+      "name": "虎豹骑",
+      "hp": 220,
+      "atk": 32,
+      "atkInterval": 0.9,
+      "moveSpeed": 4.5,
+      "atkRange": 1.5,
+      "spawnCost": 20,
+      "spawnInterval": 10,
+      "tags": [
+        "melee",
+        "cavalry",
+        "light_armor"
+      ],
+      "special": "cavalry_charge"
+    },
+    {
+      "troopId": "shu_t1",
+      "factionId": "shu",
+      "tier": 1,
+      "name": "轻步兵",
+      "hp": 100,
+      "atk": 10,
+      "atkInterval": 1.0,
+      "moveSpeed": 3.0,
+      "atkRange": 1.5,
+      "spawnCost": 5,
+      "spawnInterval": 3,
+      "tags": [
+        "melee",
+        "light_armor"
+      ],
+      "special": ""
+    },
+    {
+      "troopId": "shu_t2",
+      "factionId": "shu",
+      "tier": 2,
+      "name": "弩手",
+      "hp": 70,
+      "atk": 18,
+      "atkInterval": 1.5,
+      "moveSpeed": 2.5,
+      "atkRange": 5.0,
+      "spawnCost": 12,
+      "spawnInterval": 4,
+      "tags": [
+        "ranged"
+      ],
+      "special": "melee_bonus_1.2"
+    },
+    {
+      "troopId": "shu_t3",
+      "factionId": "shu",
+      "tier": 3,
+      "name": "白毦兵",
+      "hp": 190,
+      "atk": 28,
+      "atkInterval": 1.0,
+      "moveSpeed": 3.5,
+      "atkRange": 1.5,
+      "spawnCost": 20,
+      "spawnInterval": 10,
+      "tags": [
+        "melee",
+        "heavy_armor"
+      ],
+      "special": "iron_guard_0.7"
+    },
+    {
+      "troopId": "wu_t1",
+      "factionId": "wu",
+      "tier": 1,
+      "name": "轻装剑士",
+      "hp": 90,
+      "atk": 11,
+      "atkInterval": 0.9,
+      "moveSpeed": 3.0,
+      "atkRange": 1.5,
+      "spawnCost": 5,
+      "spawnInterval": 3,
+      "tags": [
+        "melee",
+        "light_armor"
+      ],
+      "special": ""
+    },
+    {
+      "troopId": "wu_t2",
+      "factionId": "wu",
+      "tier": 2,
+      "name": "火弓手",
+      "hp": 75,
+      "atk": 15,
+      "atkInterval": 1.2,
+      "moveSpeed": 2.5,
+      "atkRange": 5.0,
+      "spawnCost": 12,
+      "spawnInterval": 4,
+      "tags": [
+        "ranged"
+      ],
+      "special": "burn_3dmg_3sec,building_bonus_1.3"
+    },
+    {
+      "troopId": "wu_t3",
+      "factionId": "wu",
+      "tier": 3,
+      "name": "解烦军",
+      "hp": 170,
+      "atk": 24,
+      "atkInterval": 0.8,
+      "moveSpeed": 2.5,
+      "atkRange": 7.0,
+      "spawnCost": 20,
+      "spawnInterval": 10,
+      "tags": [
+        "ranged",
+        "fire_volley"
+      ],
+      "special": "fire_volley_aoe_1.5,burn_3dmg_3sec"
+    }
+  ]
+}

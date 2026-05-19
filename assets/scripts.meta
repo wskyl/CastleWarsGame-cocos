@@ -2,7 +2,18 @@
   "ver": "1.2.0",
   "importer": "directory",
   "uuid": "066b3e45-efa8-5134-b99f-538b7bea6750",
-  "files": [],
+  "files": [
+    "ai",
+    "buildings",
+    "core",
+    "faction",
+    "generals",
+    "map",
+    "scenes",
+    "systems",
+    "ui",
+    "units"
+  ],
   "subMetas": {},
   "userData": {
     "compressionType": {},

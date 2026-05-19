@@ -1,0 +1,11 @@
+{
+  "modules": [
+    "2d",
+    "3d",
+    "physics-2d-box2d",
+    "ui",
+    "tween",
+    "audio",
+    "particle-2d"
+  ]
+}

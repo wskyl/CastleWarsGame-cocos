@@ -2,7 +2,16 @@
   "ver": "1.2.0",
   "importer": "directory",
   "uuid": "44d94fe5-97e4-5360-8112-e797ab6d7966",
-  "files": [],
+  "files": [
+    "ai",
+    "buildings",
+    "economy",
+    "factions",
+    "generals",
+    "map",
+    "towers",
+    "troops"
+  ],
   "subMetas": {},
   "userData": {
     "compressionType": {},

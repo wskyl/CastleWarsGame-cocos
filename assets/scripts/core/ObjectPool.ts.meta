@@ -1,6 +1,6 @@
 {
-  "ver": "1.1.0",
-  "importer": "typescript",
+  "ver": "1.0.0",
+  "importer": "script",
   "uuid": "f5d1cf14-20c3-5e6a-b534-ea0b5a1fc8c4",
   "files": [],
   "subMetas": {},

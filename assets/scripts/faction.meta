@@ -2,7 +2,10 @@
   "ver": "1.2.0",
   "importer": "directory",
   "uuid": "f4713b6b-5544-5242-a71a-01c88a9cbbe9",
-  "files": [],
+  "files": [
+    "FactionData",
+    "FactionManager"
+  ],
   "subMetas": {},
   "userData": {
     "compressionType": {},

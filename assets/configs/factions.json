@@ -1,20 +1,22 @@
-[
-  {
-    "factionId": "wei",
-    "displayName": "魏",
-    "color": "#3366CC",
-    "riverImmune": false
-  },
-  {
-    "factionId": "shu",
-    "displayName": "蜀",
-    "color": "#33AA44",
-    "riverImmune": false
-  },
-  {
-    "factionId": "wu",
-    "displayName": "吴",
-    "color": "#CC3333",
-    "riverImmune": true
-  }
-]
+{
+  "list": [
+    {
+      "factionId": "wei",
+      "displayName": "魏",
+      "color": "#3366CC",
+      "riverImmune": false
+    },
+    {
+      "factionId": "shu",
+      "displayName": "蜀",
+      "color": "#33AA44",
+      "riverImmune": false
+    },
+    {
+      "factionId": "wu",
+      "displayName": "吴",
+      "color": "#CC3333",
+      "riverImmune": true
+    }
+  ]
+}
