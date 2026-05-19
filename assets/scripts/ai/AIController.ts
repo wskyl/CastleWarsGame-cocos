@@ -17,6 +17,7 @@ import { Barracks } from '../buildings/Barracks';
 import { DefenseTower } from '../buildings/DefenseTower';
 import { Market } from '../buildings/Market';
 import { GeneralAltar } from '../buildings/GeneralAltar';
+import { UnitManager } from '../core/UnitManager';
 
 const { ccclass } = _decorator;
 
@@ -180,12 +181,13 @@ export class AIController extends Component {
     }
 
     // ─── 辅助：统计指定半径内敌军数量 ──────────────────────────────────
+    /**
+     * 使用 UnitManager.getUnitsInRadius 空间查询替代遍历全部 AttackTarget，
+     * 避免将建筑目标（castle/barracks）计入"附近敌军"统计，
+     * 同时为后续引入空间加速结构（四叉树/网格）预留接口。
+     */
     private _countNearbyEnemies(pos: Vec3, radius: number): number {
-        let count = 0;
-        GameManager.inst?.getTargets().forEach(t => {
-            if (t.factionId === this.factionId) return;
-            if (Vec3.distance(pos, t.position) <= radius) count++;
-        });
-        return count;
+        const units = UnitManager.inst?.getUnitsInRadius(pos, radius) ?? [];
+        return units.filter(u => u.factionId !== this.factionId).length;
     }
 }

@@ -21,7 +21,7 @@ export class Castle extends Component {
 
     initCastle(factionId: string): void {
         this.factionId = factionId;
-        this._maxHp    = GameManager.inst?.buildingConfig?.castle?.hp ?? 3000;
+        this._maxHp    = GameManager.safeInst?.buildingConfig?.castle?.hp ?? 3000;
         this._hp       = this._maxHp;
 
         // 查找子节点血条前景
@@ -39,14 +39,15 @@ export class Castle extends Component {
             tags:       ['building', 'castle'],
             onHit:      this._onHit.bind(this),
         };
-        GameManager.inst?.registerTarget(this._target);
+        GameManager.safeInst?.registerTarget(this._target);
     }
 
     update(_dt: number): void {
         // 持续同步坐标（建筑固定，但保持 position 引用最新）
-        if (this._target) {
-            this.node.getWorldPosition(this._target.position);
-        }
+        // 游戏未在进行中或目标已注销时跳过更新
+        if (!this._target) return;
+        if (GameManager.safeInst?.phase !== GamePhase.PLAYING) return;
+        this.node.getWorldPosition(this._target.position);
     }
 
     private _onHit(damage: number, attackerTags: string[], attackerFactionId: string): void {
@@ -75,18 +76,18 @@ export class Castle extends Component {
     private _die(): void {
         // 注销目标
         if (this._target) {
-            GameManager.inst?.unregisterTarget(this._target);
+            GameManager.safeInst?.unregisterTarget(this._target);
             this._target = null;
         }
         // 触发出局
-        GameManager.inst?.eliminateFaction(this.factionId);
+        GameManager.safeInst?.eliminateFaction(this.factionId);
         // 摧毁整个阵营节点（父节点包含全部建筑）
         this.node.parent?.destroy();
     }
 
     onDestroy(): void {
         if (this._target) {
-            GameManager.inst?.unregisterTarget(this._target);
+            GameManager.safeInst?.unregisterTarget(this._target);
         }
     }
 

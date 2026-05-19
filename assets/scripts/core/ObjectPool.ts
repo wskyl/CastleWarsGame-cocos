@@ -59,6 +59,11 @@ export class ObjectPool {
         return this._pool.length;
     }
 
+    /** 对象池容量上限 */
+    get maxSize(): number {
+        return this._maxSize;
+    }
+
     /** 清空并销毁所有池内节点 */
     clear(): void {
         for (const node of this._pool) {

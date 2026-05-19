@@ -7,6 +7,7 @@
 import { _decorator, Component, Vec3 } from 'cc';
 import { GameManager, GamePhase } from '../core/GameManager';
 import { MapManager } from './MapManager';
+import { TroopComponent } from '../units/TroopComponent';
 
 const { ccclass } = _decorator;
 
@@ -18,7 +19,7 @@ export class TerrainZone extends Component {
     private _checkTimer: number = 0;
 
     update(dt: number): void {
-        if (GameManager.inst?.phase !== GamePhase.PLAYING) return;
+        if (GameManager.safeInst?.phase !== GamePhase.PLAYING) return;
 
         this._checkTimer += dt;
         if (this._checkTimer < this._checkInterval) return;
@@ -28,11 +29,13 @@ export class TerrainZone extends Component {
         if (!mapMgr) return;
 
         // 遍历所有活跃目标，检测河道
-        const targets = GameManager.inst.getTargets();
+        const targets = GameManager.safeInst?.getTargets();
+        if (!targets) return;
+
         for (const target of targets) {
             if (target.isBuilding) continue;
-            // 通过节点上的 TroopComponent 更新状态（避免直接引用）
-            const troop = target.node.getComponent('TroopComponent') as any;
+            // 使用类型安全的 getComponent(TroopComponent) 替代 string 查找 + as any
+            const troop = target.node.getComponent(TroopComponent);
             if (!troop) continue;
             if (troop.factionConfig?.riverImmune) continue;
 

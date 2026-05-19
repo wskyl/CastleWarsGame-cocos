@@ -15,6 +15,7 @@ import { EventManager, GameEvent } from '../core/EventManager';
 import { MapBuilder } from '../map/MapBuilder';
 import { BattleUI } from '../ui/BattleUI';
 import { RouteManager } from '../systems/RouteManager';
+import { TroopComponent } from '../units/TroopComponent';
 
 const { ccclass, property } = _decorator;
 
@@ -79,5 +80,8 @@ export class BattleSceneInit extends Component {
 
     onDestroy(): void {
         EventManager.targetOff(this);
+        // 销毁 TroopComponent 静态对象池，释放所有节点引用，
+        // 防止场景重新进入时旧节点引用残留造成内存泄漏。
+        TroopComponent.destroyPool();
     }
 }

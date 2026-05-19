@@ -53,6 +53,7 @@ export class Barracks extends Component {
 
     private _destroy(): void {
         this.isBuilt = false;
+        this._hp = 0;  // 确保 HP 归零，防止 hpPercent 返回负值
         if (this._spawner) this._spawner.destroyed = true;
         if (this._target) { GameManager.inst?.unregisterTarget(this._target); this._target = null; }
         EventManager.emit(GameEvent.BUILDING_DESTROYED, 'barracks', this.factionId, this.slotIndex.toString());
